@@ -9,5 +9,5 @@ Django app to manage a private beta phase for a website.
 
 
 Hunger has borrowed and modified a lot of code from:
-- [django-registration-invitationcode-backend](https://github.com/elcodo/django-registration-invitationcode-backend/ "django-registration-invitationcode-backend")
-- [django-privatebeta](https://github.com/pragmaticbadger/django-privatebeta/ "django-privatebeta")
+- https://github.com/elcodo/django-registration-invitationcode-backend
+- https://github.com/pragmaticbadger/django-privatebeta
