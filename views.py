@@ -4,18 +4,18 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from beta.models import InvitationCode
-from beta.forms import InviteRequestForm
+from hunger.models import InvitationCode
+from hunger.forms import InviteRequestForm
 
 def verify_invite(request, invitation_code):
     try:
         invitation_code = InvitationCode.objects.get(code=invitation_code)
-        
-        if inivitation_code.is_user:
+        if invitation_code.is_used:
             #already used
             return HttpResponseRedirect(reverse('beta_expired'))
         else:
-            request.session.['in_beta'] = True
+            request.session['in_beta'] = True
+            request.session.set_expiry(300)
             url = getattr(settings, 'BETA_SIGNUP_URL', '/signup/')
             return redirect(url)
     except InvitationCode.DoesNotExist:
@@ -46,12 +46,13 @@ def invite(request, form_class=InviteRequestForm, template_name="beta/request_in
     
     **Template:**
     
-    :template:`privatebeta/invite.html` or the template name specified by
+    :template:`beta/invite.html` or the template name specified by
     ``template_name``.
     """
     form = form_class(request.POST or None)
     if form.is_valid():
-        form.save()
+        instance = form.save(commit=False)
+        instance.save()
         return HttpResponseRedirect(reverse('beta_confirmation'))
 
     context = {'form': form}
@@ -71,7 +72,7 @@ def confirmation(request, template_name="beta/confirmation.html", extra_context=
     
     ``template_name``
         The name of the tempalte to render.  Optional, defaults to
-        privatebeta/sent.html.
+        beta/sent.html.
 
     ``extra_context``
         A dictionary to add to the context of the view.  Keys will become
@@ -99,7 +100,7 @@ def expired(request, template_name="beta/expired.html", extra_context=None):
     
     ``template_name``
         The name of the tempalte to render.  Optional, defaults to
-        privatebeta/sent.html.
+        beta/expired.html.
 
     ``extra_context``
         A dictionary to add to the context of the view.  Keys will become

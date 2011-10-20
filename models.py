@@ -1,4 +1,4 @@
-import datetime, string, random
+import string, random
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -12,12 +12,16 @@ class InvitationCode(models.Model):
     """Invitation code model"""
     code = models.CharField(blank=True, max_length=8, unique=True, verbose_name=_(u"Invitation code"))
     is_used = models.BooleanField(default=False, verbose_name=_(u"Is code used?"))
-    email = models.EmailField(_('Email address'), unique=True)
-    user = models.ForeignKey(User, blank=True, null=True)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    invited = models.BooleanField(_('Invited'), default=False)
-    used = models.DateTimeField(blank=True, null=True, default=False, verbose_name=_(u"Used on"))
+    is_invited = models.BooleanField(_('Invited'), default=False)
     
-    def save(self, *arg, **kwargs):
+    email = models.EmailField(_('Email address'), unique=True)
+    user = models.ForeignKey(User, blank=True, null=True, default=None)
+    
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    invited = models.DateTimeField(blank=True, null=True, verbose_name=_(u"Invited on"))
+    used = models.DateTimeField(blank=True, null=True, verbose_name=_(u"Used on"))
+    
+    def save(self, *args, **kwargs):
         if not self.code:
             self.code = generate_invite_code()
+        super(InvitationCode, self).save(*args, **kwargs)

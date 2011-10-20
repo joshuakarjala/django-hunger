@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-    url(r'^$', 'beta.views.invite', name='beta_invite'),
-    url(r'^sent/$', 'beta.views.confirmation', name='beta_confirmation'),
-    url(r'^expired/$', 'beta.views.expired', name='beta_expired'),
+    url(r'^$', 'hunger.views.invite', name='beta_invite'),
+    url(r'^sent/$', 'hunger.views.confirmation', name='beta_confirmation'),
+    url(r'^expired/$', 'hunger.views.expired', name='beta_expired'),
 )

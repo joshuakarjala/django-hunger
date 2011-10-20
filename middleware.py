@@ -45,7 +45,7 @@ class BetaMiddleware(object):
         if request.user.is_authenticated() or not self.enable_beta or request.session.get('in_beta', False):
             # User is logged in, no need to check anything else.
             return
-        whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'beta.views']
+        whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'hunger.views']
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
 
