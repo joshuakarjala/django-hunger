@@ -27,6 +27,7 @@ syntax: glob
 
 #temporary! textmate files
 ._*.*
+._*
 
 # IntelliJ
 .idea/*
