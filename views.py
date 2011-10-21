@@ -11,8 +11,7 @@ def verify_invite(request, invitation_code):
     try:
         invitation_code = InvitationCode.objects.get(code=invitation_code)
         if invitation_code.is_used:
-            #already used
-            return HttpResponseRedirect(reverse('beta_expired'))
+            return HttpResponseRedirect(reverse('beta_used'))
         else:
             request.session['in_beta'] = True
             request.session.set_expiry(300)
@@ -31,7 +30,7 @@ def invite(request, form_class=InviteRequestForm, template_name="beta/request_in
     
     ``template_name``
         The name of the tempalte to render.  Optional, defaults to
-        privatebeta/invite.html.
+        beta/request_invite.html.
 
     ``extra_context``
         A dictionary to add to the context of the view.  Keys will become
@@ -46,7 +45,7 @@ def invite(request, form_class=InviteRequestForm, template_name="beta/request_in
     
     **Template:**
     
-    :template:`beta/invite.html` or the template name specified by
+    :template:`beta/request_invite.html` or the template name specified by
     ``template_name``.
     """
     form = form_class(request.POST or None)
@@ -72,7 +71,7 @@ def confirmation(request, template_name="beta/confirmation.html", extra_context=
     
     ``template_name``
         The name of the tempalte to render.  Optional, defaults to
-        beta/sent.html.
+        beta/confirmation.html.
 
     ``extra_context``
         A dictionary to add to the context of the view.  Keys will become
@@ -86,13 +85,13 @@ def confirmation(request, template_name="beta/confirmation.html", extra_context=
     
     **Template:**
     
-    :template:`privatebeta/sent.html` or the template name specified by
+    :template:`beta/confirmation.html` or the template name specified by
     ``template_name``.
     """
     return direct_to_template(request, template=template_name, extra_context=extra_context)
     
 
-def expired(request, template_name="beta/expired.html", extra_context=None):
+def expired(request, template_name="beta/used.html", extra_context=None):
     """
     Display a message to the user that the invitation code has already been used.
     
@@ -100,7 +99,7 @@ def expired(request, template_name="beta/expired.html", extra_context=None):
     
     ``template_name``
         The name of the tempalte to render.  Optional, defaults to
-        beta/expired.html.
+        beta/used.html.
 
     ``extra_context``
         A dictionary to add to the context of the view.  Keys will become
@@ -114,7 +113,7 @@ def expired(request, template_name="beta/expired.html", extra_context=None):
     
     **Template:**
     
-    :template:`privatebeta/sent.html` or the template name specified by
+    :template:`beta/used.html` or the template name specified by
     ``template_name``.
     """
     return direct_to_template(request, template=template_name, extra_context=extra_context)

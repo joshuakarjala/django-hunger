@@ -1,7 +1,10 @@
+import datetime
+from hunger.models import InvitationCode
+
 #send invitation code to user
-def invitation_code_used(sender, user, request, **kwargs):
+def invitation_code_sent(sender, email, **kwargs):
     try:
-        invitation_code = InvitationCode.objects.get(email=user.email)
+        invitation_code = InvitationCode.objects.get(email=email)
         invitation_code.is_invited = True
         invitation_code.invited = datetime.datetime.now()
         invitation_code.save()

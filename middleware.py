@@ -1,5 +1,10 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from hunger.signals import invite_used
+from hunger.receivers import invitation_code_used
+
+#setup signals
+invite_used.connect(invitation_code_used)
 
 class BetaMiddleware(object):
     """
@@ -40,23 +45,41 @@ class BetaMiddleware(object):
         self.always_allow_views = getattr(settings, 'BETA_ALWAYS_ALLOW_VIEWS', [])
         self.always_allow_modules = getattr(settings, 'BETA_ALWAYS_ALLOW_MODULES', [])
         self.redirect_url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
+        self.signup_views = getattr(settings, 'BETA_SIGNUP_VIEWS', [])
+        self.signup_confirmation_view = getattr(settings, 'BETA_SIGNUP_CONFIRMATION_VIEW', [])
+        self.signup_url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if request.user.is_authenticated() or not self.enable_beta or request.session.get('in_beta', False):
-            # User is logged in, no need to check anything else.
+        if request.user.is_authenticated() or not self.enable_beta:
+            # User is logged in, or beta is not active, no need to check anything else.
             return
+            
         whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'hunger.views']
+        
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
 
         full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
+        
+        if full_view_name == self.signup_confirmation_view and request.session.get('in_beta', False):
+            #signup completed - deactivate invitation code
+            invite_used.send(sender=self.__class__, user=request.user)
+            return
+        
+        if full_view_name in self.signup_views and request.session.get('in_beta', False):
+            #if beta code is valid and trying to register then let them through
+            return
 
         if full_view_name in self.never_allow_views:
             return HttpResponseRedirect(self.redirect_url)
 
         if full_view_name in self.always_allow_views:
             return
+            
         if '%s' % view_func.__module__ in whitelisted_modules:
             return
         else:
-            return HttpResponseRedirect(self.redirect_url)
+            if request.session.get('in_beta', False):
+                return HttpResponseRedirect(self.signup_url)
+            else:
+                return HttpResponseRedirect(self.redirect_url)
