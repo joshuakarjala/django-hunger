@@ -10,7 +10,7 @@ invite_sent.connect(invitation_code_sent)
 
 def send_invite(self, request, queryset):
     import importlib
-    email_module = importlib.import_module(settings.BETA_EMAIL_FUNCTION)
+    email_module = importlib.import_module(settings.BETA_EMAIL_MODULE)
     email_function = getattr(email_module, 'beta_email')
     obj = queryset[0]
     email_col = 0

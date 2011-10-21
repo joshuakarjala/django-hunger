@@ -12,9 +12,9 @@ def invitation_code_sent(sender, email, **kwargs):
         pass
 
 #when user with corresponding email has been created then set the code as used.
-def invitation_code_used(sender, user, request, **kwargs):
+def invitation_code_used(sender, user, invitation_code, **kwargs):
     try:
-        invitation_code = InvitationCode.objects.get(email=user.email)
+        invitation_code = InvitationCode.objects.get(code=invitation_code)
         invitation_code.user = user
         invitation_code.is_used = True
         invitation_code.used = datetime.datetime.now()

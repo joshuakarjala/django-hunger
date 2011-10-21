@@ -13,10 +13,11 @@ def verify_invite(request, invitation_code):
         if invitation_code.is_used:
             return HttpResponseRedirect(reverse('beta_used'))
         else:
-            request.session['in_beta'] = True
-            request.session.set_expiry(300)
             url = getattr(settings, 'BETA_SIGNUP_URL', '/signup/')
-            return redirect(url)
+            response = redirect(url)
+            response.set_cookie('in_beta', True)
+            response.set_cookie('invitation_code', invitation_code.code)
+            return response
     except InvitationCode.DoesNotExist:
         url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
         return redirect(url)
