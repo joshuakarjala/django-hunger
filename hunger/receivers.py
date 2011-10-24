@@ -1,13 +1,26 @@
 import datetime
+import importlib
+from django.conf import settings
 from hunger.models import InvitationCode
 
+#send confirmation email to user
+def invitation_code_created(sender, email, **kwargs):    
+    email_module = importlib.import_module(settings.BETA_EMAIL_MODULE)
+    email_function = getattr(email_module, settings.BETA_EMAIL_CONFIRM_FUNCTION)
+    email_function(email)        
+
 #send invitation code to user
-def invitation_code_sent(sender, email, **kwargs):
+def invitation_code_sent(sender, email, invitation_code, **kwargs):
     try:
         invitation_code = InvitationCode.objects.get(email=email)
         invitation_code.is_invited = True
         invitation_code.invited = datetime.datetime.now()
         invitation_code.save()
+        
+        email_module = importlib.import_module(settings.BETA_EMAIL_MODULE)
+        email_function = getattr(email_module, settings.BETA_EMAIL_INVITE_FUNCTION)
+        email_function(email, code)
+        
     except InvitationCode.DoesNotExist:
         pass
 

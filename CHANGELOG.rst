@@ -1,3 +1,9 @@
+commit 5bc94aeb1e78ce7e8f2e367d649ff87716cc40bb
+Author: Joshua Karjala-Svendsen <joshua@parentes.org>
+Date:   Mon Oct 24 15:13:36 2011 +0200
+
+    Adding a bunch of standard files to prepare for upload
+
 commit 88b05258bc04fabbabf6bb59c6d3023c4fd77231
 Author: Joshua Karjala-Svendsen <joshua@parentes.org>
 Date:   Mon Oct 24 14:42:30 2011 +0200

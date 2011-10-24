@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from hunger.models import InvitationCode
 from hunger.signals import invite_sent
@@ -9,9 +8,7 @@ from hunger.receivers import invitation_code_sent
 invite_sent.connect(invitation_code_sent)
 
 def send_invite(self, request, queryset):
-    import importlib
-    email_module = importlib.import_module(settings.BETA_EMAIL_MODULE)
-    email_function = getattr(email_module, 'beta_email')
+    
     obj = queryset[0]
     email_col = 0
     code_col = 0
@@ -31,11 +28,9 @@ def send_invite(self, request, queryset):
         code = obj._meta.fields[code_col].value_to_string(obj)
         
         if not obj.is_invited:
-            email_function(email, code)
-            invite_sent.send(sender=self.__class__, email=email)
+            invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
             
 def resend_invite(self, request, queryset):
-    import importlib
     email_module = importlib.import_module(settings.BETA_EMAIL_FUNCTION)
     email_function = getattr(email_module, 'beta_email')
     obj = queryset[0]
@@ -57,8 +52,7 @@ def resend_invite(self, request, queryset):
         code = obj._meta.fields[code_col].value_to_string(obj)
         
         if obj.is_invited:
-            email_function(email, code)
-            invite_sent.send(sender=self.__class__, email=email)
+            invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
         
     
 class InvitationCodeAdmin(admin.ModelAdmin):

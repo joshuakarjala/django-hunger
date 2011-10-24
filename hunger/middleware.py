@@ -55,11 +55,24 @@ class BetaMiddleware(object):
             return
             
         in_beta = request.COOKIES.get('in_beta', False)
-        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
         whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'hunger.views']            
         
+        
+        #Check modules
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
+            
+        if '%s' % view_func.__module__ in whitelisted_modules:
+            return
+            
+        #Check views
+        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
+            
+        if full_view_name in self.never_allow_views:
+            return HttpResponseRedirect(self.redirect_url)
+
+        if full_view_name in self.always_allow_views:
+            return
         
         if full_view_name == self.signup_confirmation_view:
             #signup completed - deactivate invitation code
@@ -74,15 +87,6 @@ class BetaMiddleware(object):
         
         if full_view_name in self.signup_views and in_beta:
             #if beta code is valid and trying to register then let them through
-            return
-
-        if full_view_name in self.never_allow_views:
-            return HttpResponseRedirect(self.redirect_url)
-
-        if full_view_name in self.always_allow_views:
-            return
-            
-        if '%s' % view_func.__module__ in whitelisted_modules:
             return
         else:
             if in_beta:

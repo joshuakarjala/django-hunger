@@ -25,8 +25,6 @@ setup(
     version=version_str,
     packages=[
         'hunger',
-        'hunger.management',
-        'hunger.management.commands',
     ],
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',

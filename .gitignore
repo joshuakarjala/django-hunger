@@ -5,6 +5,8 @@ syntax: glob
 # Backup files left behind by the Emacs editor.
 *~
 
+*.egg
+
 # Lock files used by the Emacs editor.
 # Notice that the "#" character is quoted with a backslash.
 # This prevents it from being interpreted as starting a comment.
@@ -41,6 +43,9 @@ syntax: glob
 /media/stats*
 .sass-cache
 /media/js/file-uploader
+
+build/*
+dist/*
 
 media/c/m.scss
 
