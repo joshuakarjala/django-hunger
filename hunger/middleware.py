@@ -50,23 +50,26 @@ class BetaMiddleware(object):
         self.signup_url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        in_beta = request.COOKIES.get('in_beta', False)
-                
-        if request.user.is_authenticated() or not self.enable_beta:
-            # User is logged in, or beta is not active, no need to check anything else.
+        if not self.enable_beta:
+            #Do nothing is beta is not activated
             return
             
-        whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'hunger.views']
+        in_beta = request.COOKIES.get('in_beta', False)
+        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
+        whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'hunger.views']            
         
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
-
-        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
         
         if full_view_name == self.signup_confirmation_view:
             #signup completed - deactivate invitation code
             invitation_code = request.COOKIES.get('invitation_code', None)
+            request.session['beta_complete'] = True
             invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
+            return
+                
+        if request.user.is_authenticated() and full_view_name not in self.signup_views:
+            # User is logged in, or beta is not active, no need to check anything else.
             return
         
         if full_view_name in self.signup_views and in_beta:
@@ -86,3 +89,12 @@ class BetaMiddleware(object):
                 return HttpResponseRedirect(self.signup_url)
             else:
                 return HttpResponseRedirect(self.redirect_url)
+                
+    def process_response(self, request, response):        
+        if request.session.get('beta_complete', False):
+            response.delete_cookie('in_beta')
+            response.delete_cookie('invitation_code')
+            request.session['beta_complete'] = None
+            
+        return response
+        
