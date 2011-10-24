@@ -8,6 +8,5 @@ Django app to manage a private beta phase for a website.
 - The signup view of the app is only accessible by providing the correct invitation code in the url.
 
 
-Hunger has borrowed and modified a lot of code from:
-- https://github.com/elcodo/django-registration-invitationcode-backend
+Hunger is partially based on:
 - https://github.com/pragmaticbadger/django-privatebeta

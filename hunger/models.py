@@ -9,17 +9,16 @@ def generate_invite_code():
     return ''.join(random.choice(string.letters) for i in xrange(num_chars))
 
 class InvitationCode(models.Model):
-    """Invitation code model"""
-    code = models.CharField(blank=True, max_length=8, unique=True, verbose_name=_(u"Invitation code"))
-    is_used = models.BooleanField(default=False, verbose_name=_(u"Is code used?"))
-    is_invited = models.BooleanField(_('Invited'), default=False)
+    code = models.CharField(_(u"Invitation code"), blank=True, max_length=8, unique=True)
+    is_used = models.BooleanField(_(u"Is Used"), default=False)
+    is_invited = models.BooleanField(_('Is Invited'), default=False)
     
     email = models.EmailField(_('Email address'), unique=True)
     user = models.ForeignKey(User, blank=True, null=True, default=None)
     
     created = models.DateTimeField(_('Created'), auto_now_add=True)
-    invited = models.DateTimeField(blank=True, null=True, verbose_name=_(u"Invited on"))
-    used = models.DateTimeField(blank=True, null=True, verbose_name=_(u"Used on"))
+    invited = models.DateTimeField(_(u"Invited"), blank=True, null=True)
+    used = models.DateTimeField(_(u"Used"), blank=True, null=True)
     
     def save(self, *args, **kwargs):
         if not self.code:
