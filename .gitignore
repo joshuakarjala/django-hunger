@@ -6,6 +6,7 @@ syntax: glob
 *~
 
 *.egg
+hunger.egg*
 
 # Lock files used by the Emacs editor.
 # Notice that the "#" character is quoted with a backslash.

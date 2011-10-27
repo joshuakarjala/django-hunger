@@ -8,7 +8,7 @@ try:
 except:
     pass
 
-version_str = '%d.%d' % (hunger.VERSION[0], hunger.VERSION[1])
+version_str = '%d.%d.%d' % (hunger.VERSION[0], hunger.VERSION[1], hunger.VERSION[2])
 
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',

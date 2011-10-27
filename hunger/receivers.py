@@ -19,7 +19,7 @@ def invitation_code_sent(sender, email, invitation_code, **kwargs):
         
         email_module = importlib.import_module(settings.BETA_EMAIL_MODULE)
         email_function = getattr(email_module, settings.BETA_EMAIL_INVITE_FUNCTION)
-        email_function(email, code)
+        email_function(email, invitation_code.code)
         
     except InvitationCode.DoesNotExist:
         pass

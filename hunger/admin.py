@@ -8,7 +8,6 @@ from hunger.receivers import invitation_code_sent
 invite_sent.connect(invitation_code_sent)
 
 def send_invite(self, request, queryset):
-    
     obj = queryset[0]
     email_col = 0
     code_col = 0
@@ -31,8 +30,6 @@ def send_invite(self, request, queryset):
             invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
             
 def resend_invite(self, request, queryset):
-    email_module = importlib.import_module(settings.BETA_EMAIL_FUNCTION)
-    email_function = getattr(email_module, 'beta_email')
     obj = queryset[0]
     email_col = 0
     code_col = 0

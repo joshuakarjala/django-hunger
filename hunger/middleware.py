@@ -55,7 +55,7 @@ class BetaMiddleware(object):
             return
             
         in_beta = request.COOKIES.get('in_beta', False)
-        whitelisted_modules = ['django.contrib.auth.views', 'django.views.static', 'hunger.views']            
+        whitelisted_modules = ['django.contrib.auth.views', 'django.contrib.admin.sites', 'django.views.static', 'hunger.views']            
         
         
         #Check modules
@@ -94,11 +94,13 @@ class BetaMiddleware(object):
             else:
                 return HttpResponseRedirect(self.redirect_url)
                 
-    def process_response(self, request, response):        
-        if request.session.get('beta_complete', False):
-            response.delete_cookie('in_beta')
-            response.delete_cookie('invitation_code')
-            request.session['beta_complete'] = None
-            
+    def process_response(self, request, response):      
+        try:
+            if request.session.get('beta_complete', False):
+                response.delete_cookie('in_beta')
+                response.delete_cookie('invitation_code')
+                request.session['beta_complete'] = None
+        except AttributeError:
+            pass
         return response
         
