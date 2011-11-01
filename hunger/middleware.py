@@ -48,8 +48,13 @@ class BetaMiddleware(object):
         self.signup_views = getattr(settings, 'BETA_SIGNUP_VIEWS', [])
         self.signup_confirmation_view = getattr(settings, 'BETA_SIGNUP_CONFIRMATION_VIEW', '')
         self.signup_url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
+        self.allow_flatpages = getattr(settings, 'BETA_ALLOW_FLATPAGES', [])
 
-    def process_view(self, request, view_func, view_args, view_kwargs):
+    def process_view(self, request, view_func, view_args, view_kwargs):        
+        if request.path in self.allow_flatpages or '%s/' % request.path in self.allow_flatpages:
+            from django.contrib.flatpages.views import flatpage
+            return flatpage(request, request.path_info) 
+                    
         if not self.enable_beta:
             #Do nothing is beta is not activated
             return
@@ -89,10 +94,11 @@ class BetaMiddleware(object):
             #if beta code is valid and trying to register then let them through
             return
         else:
+            next_page = request.META.get('REQUEST_URI')
             if in_beta:
-                return HttpResponseRedirect(self.signup_url)
+                return HttpResponseRedirect(self.signup_url + '?next=%s' % next_page)
             else:
-                return HttpResponseRedirect(self.redirect_url)
+                return HttpResponseRedirect(self.redirect_url + '?next=%s' % next_page)
                 
     def process_response(self, request, response):      
         try:
