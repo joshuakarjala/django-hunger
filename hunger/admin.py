@@ -57,7 +57,8 @@ class InvitationCodeAdmin(admin.ModelAdmin):
     #fields = ('code', 'is_used', 'is_invited', 'user', 'email', 'created', 'invited', 'used', )
     #readonly_fields = ('code', 'is_used', 'is_invited', 'email', 'user', 'created', 'invited', 'used', )
     list_display = ('code', 'is_used', 'is_invited', 'email', 'user', 'created', 'invited', 'used', )
-    list_filter = ('is_used', 'is_invited', )
+    list_filter = ('is_used', 'is_invited', 'created', 'invited', 'used')
+    search_fields = ['email', 'user']
     actions = [send_invite, resend_invite]
 
 admin.site.register(InvitationCode, InvitationCodeAdmin)
