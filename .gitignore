@@ -44,6 +44,7 @@ hunger.egg*
 /media/stats*
 .sass-cache
 /media/js/file-uploader
+/django_hunger.egg-info
 
 build/*
 dist/*
@@ -51,3 +52,4 @@ dist/*
 media/c/m.scss
 
 media/c/m.scss
+
