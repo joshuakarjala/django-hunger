@@ -21,14 +21,14 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name='hunger',
+    name='django-hunger',
     version=version_str,
     packages=[
-        'hunger',
+        'django-hunger',
     ],
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
-    url='https://github.com/joshuakarjala/hunger/',
+    url='https://github.com/joshuakarjala/django-hunger/',
     license='MIT',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,

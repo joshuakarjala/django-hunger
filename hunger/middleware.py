@@ -62,17 +62,17 @@ class BetaMiddleware(object):
         in_beta = request.COOKIES.get('in_beta', False)
         whitelisted_modules = ['django.contrib.auth.views', 'django.contrib.admin.sites', 'django.views.static', 'hunger.views']            
         
-        
+        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
+
         #Check modules
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
             
-        if '%s' % view_func.__module__ in whitelisted_modules:
+        #if view in module then ignore - except if view is signup confirmation
+        if '%s' % view_func.__module__ in whitelisted_modules and not full_view_name == self.signup_confirmation_view:
             return
             
-        #Check views
-        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
-            
+        #Check views            
         if full_view_name in self.never_allow_views:
             return HttpResponseRedirect(self.redirect_url)
 
