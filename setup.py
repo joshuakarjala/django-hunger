@@ -24,7 +24,7 @@ setup(
     name='django-hunger',
     version=version_str,
     packages=[
-        'django-hunger',
+        'hunger',
     ],
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
