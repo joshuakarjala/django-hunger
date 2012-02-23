@@ -12,14 +12,14 @@ class InvitationCode(models.Model):
     code = models.CharField(_(u"Invitation code"), blank=True, max_length=8, unique=True)
     is_used = models.BooleanField(_(u"Is Used"), default=False)
     is_invited = models.BooleanField(_('Is Invited'), default=False)
-    
+
     email = models.EmailField(_('Email address'), unique=True)
     user = models.ForeignKey(User, blank=True, null=True, default=None)
-    
+
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     invited = models.DateTimeField(_(u"Invited"), blank=True, null=True)
     used = models.DateTimeField(_(u"Used"), blank=True, null=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = generate_invite_code()
@@ -29,11 +29,10 @@ class InvitationCode(models.Model):
                 from hunger.signals import invite_created
                 invite_created.connect(invitation_code_created)
                 invite_created.send(sender=self.__class__, email=self.email)
-        
+
         try:
             del kwargs["skip"]
         except KeyError:
             pass
-                
+
         super(InvitationCode, self).save(*args, **kwargs)
-        
