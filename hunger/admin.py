@@ -12,13 +12,13 @@ invite_sent.connect(invitation_code_sent)
 
 def export_email(self, request, queryset):
     emails = ""
-    
+
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=email.csv'
     writer = csv.writer(response)
 
     writer.writerow(["email", "is_used", "is_invited", "created", "invited", "used"])
-        
+
     for obj in queryset:
         code = obj
         email = code.email
@@ -45,47 +45,47 @@ def send_invite(self, request, queryset):
     obj = queryset[0]
     email_col = 0
     code_col = 0
-    
+
     for field in obj._meta.fields:
         if field.get_attname() == "email":
             break
         email_col = email_col + 1
-        
+
     for field in obj._meta.fields:
         if field.get_attname() == "code":
             break
         code_col = code_col + 1
-    
+
     for obj in queryset:
         email = obj._meta.fields[email_col].value_to_string(obj)
         code = obj._meta.fields[code_col].value_to_string(obj)
-        
+
         if not obj.is_invited:
             invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
-            
+
 def resend_invite(self, request, queryset):
     obj = queryset[0]
     email_col = 0
     code_col = 0
-    
+
     for field in obj._meta.fields:
         if field.get_attname() == "email":
             break
         email_col = email_col + 1
-        
+
     for field in obj._meta.fields:
         if field.get_attname() == "code":
             break
         code_col = code_col + 1
-    
+
     for obj in queryset:
         email = obj._meta.fields[email_col].value_to_string(obj)
         code = obj._meta.fields[code_col].value_to_string(obj)
-        
+
         if obj.is_invited:
             invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
-        
-    
+
+
 class InvitationCodeAdmin(admin.ModelAdmin):
     """Admin for invitation code"""
     #fields = ('code', 'is_used', 'is_invited', 'user', 'email', 'created', 'invited', 'used', )
