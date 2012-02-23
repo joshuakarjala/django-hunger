@@ -23,9 +23,18 @@ class InvitationCode(models.Model):
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = generate_invite_code()
-            from hunger.receivers import invitation_code_created
-            from hunger.signals import invite_created
-            invite_created.connect(invitation_code_created)
-            invite_created.send(sender=self.__class__, email=self.email)
+
+            if not kwargs.get("skip", False):
+                from hunger.receivers import invitation_code_created
+                from hunger.signals import invite_created
+                invite_created.connect(invitation_code_created)
+                invite_created.send(sender=self.__class__, email=self.email)
+            else:
+        
+        try:
+            del kwargs["skip"]
+        except KeyError:
+            pass
+                
         super(InvitationCode, self).save(*args, **kwargs)
         
