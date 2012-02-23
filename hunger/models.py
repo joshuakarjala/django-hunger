@@ -29,7 +29,6 @@ class InvitationCode(models.Model):
                 from hunger.signals import invite_created
                 invite_created.connect(invitation_code_created)
                 invite_created.send(sender=self.__class__, email=self.email)
-            else:
         
         try:
             del kwargs["skip"]
