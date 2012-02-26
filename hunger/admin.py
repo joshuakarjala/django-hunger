@@ -61,7 +61,8 @@ def send_invite(self, request, queryset):
         code = obj._meta.fields[code_col].value_to_string(obj)
 
         if not obj.is_invited:
-            invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
+            invite_sent.send(sender=self.__class__, email=email,
+                             invitation_code=code, request=request)
 
 def resend_invite(self, request, queryset):
     obj = queryset[0]
@@ -83,7 +84,8 @@ def resend_invite(self, request, queryset):
         code = obj._meta.fields[code_col].value_to_string(obj)
 
         if obj.is_invited:
-            invite_sent.send(sender=self.__class__, email=email, invitation_code=code)
+            invite_sent.send(sender=self.__class__, email=email,
+                             invitation_code=code, request=request)
 
 
 class InvitationCodeAdmin(admin.ModelAdmin):
