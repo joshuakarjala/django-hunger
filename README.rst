@@ -20,9 +20,9 @@ Settings
 
 
 ``BETA_INVITE_CODE_LENGTH``
-String length of the invitation_code
+  String length of the invitation_code
 ``BETA_ENABLE_BETA``
-Enable hunger middleware
+  Enable hunger middleware
 ``BETA_NEVER_ALLOW_VIEWS``
 Never allow access to these views
 ``BETA_ALWAYS_ALLOW_VIEWS``
