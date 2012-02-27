@@ -59,7 +59,7 @@ class BetaMiddleware(object):
             #Do nothing is beta is not activated
             return
 
-        in_beta = request.session.get('in_beta', False)
+        in_beta = request.COOKIES.get('in_beta', False)
         whitelisted_modules = ['django.contrib.auth.views',
                                'django.contrib.admin.sites',
                                'django.views.static',
@@ -85,7 +85,7 @@ class BetaMiddleware(object):
 
         if full_view_name == self.signup_confirmation_view:
             #signup completed - deactivate invitation code
-            invitation_code = request.session.get('invitation_code', None)
+            invitation_code = request.COOKIES.get('invitation_code', None)
             request.session['beta_complete'] = True
             invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
             return
@@ -107,8 +107,8 @@ class BetaMiddleware(object):
     def process_response(self, request, response):
         try:
             if request.session.get('beta_complete', False):
-                del response.session['in_beta']
-                del response.session['invitation_code']
+                response.delete_cookie('in_beta')
+                response.delete_cookie('invitation_code')
                 request.session['beta_complete'] = None
         except AttributeError:
             pass

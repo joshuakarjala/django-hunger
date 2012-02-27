@@ -15,8 +15,8 @@ def verify_invite(request, invitation_code):
         else:
             url = getattr(settings, 'BETA_SIGNUP_URL', '/signup/')
             response = redirect(url)
-            response.session.setdefault('in_beta', True)
-            response.session.setdefault('invitation_code', invitation_code.code)
+            response.set_cookie('in_beta', True)
+            response.set_cookie('invitation_code', invitation_code.code)
             return response
     except InvitationCode.DoesNotExist:
         url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
