@@ -4,7 +4,7 @@ import hunger
 DESCRIPTION = "A Django app to mange a private beta phase."
 
 try:
-    LONG_DESCRIPTION = open('README.RST').read()
+    LONG_DESCRIPTION = open('README.rst').read()
 except:
     pass
 
