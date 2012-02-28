@@ -28,7 +28,7 @@ Settings
 ``BETA_ALWAYS_ALLOW_VIEWS``
     Always let unregistered user see these view
 ``BETA_ALWAYS_ALLOW_MODULES``
-    Convenience settings - allow all views and a given module 
+    Convenience settings - allow all views and a given module
 ``BETA_ALLOW_FLATPAGES``
     If using flatpages app
 ``BETA_SIGNUP_VIEWS``
@@ -39,6 +39,8 @@ Settings
     If user is not logged in and trying to access a hidden view - where should he/she be redirected
 ``BETA_SIGNUP_URL``
     What is the url for the signup page
+``BETA_EMAIL_TEMPLATES_DIR``
+    Directory containing email templates
 ``BETA_EMAIL_MODULE``
     Module where the email functions are
 ``BETA_EMAIL_CONFIRM_FUNCTION``
