@@ -8,17 +8,17 @@ from hunger.models import InvitationCode
 from hunger.forms import InviteRequestForm
 
 def verify_invite(request, invitation_code):
-    try:
-        invitation_code = InvitationCode.objects.get(code=invitation_code)
-        if invitation_code.is_used:
+    valid, exists = InvitationCode.validate_code(invitation_code)
+
+    if exists:
+        if not valid:
             return HttpResponseRedirect(reverse('beta_used'))
         else:
             url = getattr(settings, 'BETA_SIGNUP_URL', '/signup/')
             response = redirect(url)
-            response.set_cookie('in_beta', True)
-            response.set_cookie('invitation_code', invitation_code.code)
+            response.set_cookie('invitation_code', invitation_code)
             return response
-    except InvitationCode.DoesNotExist:
+    else:
         url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
         return redirect(url)
 

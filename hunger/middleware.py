@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from hunger.models import InvitationCode
 from hunger.signals import invite_used
 from hunger.receivers import invitation_code_used
 
@@ -59,7 +60,8 @@ class BetaMiddleware(object):
             #Do nothing is beta is not activated
             return
 
-        in_beta = request.COOKIES.get('in_beta', False)
+        invitation_code = request.COOKIES.get('invitation_code', '')
+        in_beta, exists = InvitationCode.validate_code(invitation_code)
         whitelisted_modules = ['django.contrib.auth.views',
                                'django.contrib.admin.sites',
                                'django.views.static',
@@ -85,7 +87,6 @@ class BetaMiddleware(object):
 
         if full_view_name == self.signup_confirmation_view:
             #signup completed - deactivate invitation code
-            invitation_code = request.COOKIES.get('invitation_code', None)
             request.session['beta_complete'] = True
             invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
             return
@@ -107,7 +108,6 @@ class BetaMiddleware(object):
     def process_response(self, request, response):
         try:
             if request.session.get('beta_complete', False):
-                response.delete_cookie('in_beta')
                 response.delete_cookie('invitation_code')
                 request.session['beta_complete'] = None
         except AttributeError:

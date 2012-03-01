@@ -36,3 +36,17 @@ class InvitationCode(models.Model):
             pass
 
         super(InvitationCode, self).save(*args, **kwargs)
+
+
+    @classmethod
+    def validate_code(cls, code):
+        #returns valid, exists
+        try:
+            invitation_code = InvitationCode.objects.get(code=code)
+            if invitation_code.is_used:
+                return False, True
+            else:
+                return True, True
+        except InvitationCode.DoesNotExist:
+            return False, False
+
