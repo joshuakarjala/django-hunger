@@ -65,6 +65,13 @@ Modify ``SOCIAL_AUTH_PIPELINE`` in settings to replace
         'social_auth.backends.pipeline.user.update_user_details'
     )
 
+``BETA_ALWAYS_ALLOW_VIEWS`` must at bare minimum include the relevant
+social_auth views::
+
+    BETA_ALWAYS_ALLOW_VIEWS = (
+        'social_auth.views.auth',
+        'social_auth.views.complete',
+    )
 
 Credit
 ------
