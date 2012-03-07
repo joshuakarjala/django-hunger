@@ -48,6 +48,23 @@ Settings
 ``BETA_EMAIL_INVITE_FUNCTION``
     Function for sending out the invitation code
 
+Integrating with django_social_auth
+-----------------------------------
+
+Modify ``SOCIAL_AUTH_PIPELINE`` in settings to replace
+``social_auth.backends.pipeline.user.create_user`` with
+``create_beta_user`` (using default pipeline)::
+
+    SOCIAL_AUTH_PIPELINE = (
+        'social_auth.backends.pipeline.social.social_auth_user',
+        'social_auth.backends.pipeline.associate.associate_by_email',
+        'social_auth.backends.pipeline.user.get_username',
+        'hunger.contrib.social_auth.create_beta_user',
+        'social_auth.backends.pipeline.social.associate_user',
+        'social_auth.backends.pipeline.social.load_extra_data',
+        'social_auth.backends.pipeline.user.update_user_details'
+    )
+
 
 Credit
 ------
