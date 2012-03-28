@@ -25,6 +25,7 @@ setup(
     version=version_str,
     packages=[
         'hunger',
+        'hunger.contrib',
     ],
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
