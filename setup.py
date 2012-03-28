@@ -1,7 +1,7 @@
 from setuptools import setup
 import hunger
 
-DESCRIPTION = "A Django app to mange a private beta phase."
+DESCRIPTION = "A Django app to manage a private beta phase."
 
 try:
     LONG_DESCRIPTION = open('README.rst').read()
@@ -25,6 +25,7 @@ setup(
     version=version_str,
     packages=[
         'hunger',
+        'hunger.contrib',
     ],
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
@@ -35,4 +36,5 @@ setup(
     platforms=['any'],
     classifiers=CLASSIFIERS,
     install_requires=[''],
+    package_data={'hunger': ['templates/hunger/*',]},
 )
