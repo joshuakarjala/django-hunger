@@ -47,9 +47,10 @@ hunger.egg*
 /django_hunger.egg-info
 
 build/*
+_build
+.build
 dist/*
 
 media/c/m.scss
 
 media/c/m.scss
-
