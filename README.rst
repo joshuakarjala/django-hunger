@@ -50,7 +50,7 @@ Settings
 Integration with django_templated_email
 ---------------------------------------
 
-If django_templated_email - https://github.com/bradwhittington/django-templated-email/>
+If django_templated_email - https://github.com/bradwhittington/django-templated-email
 is installed, you can use customized ``*.email`` templates with an
 example setting such as::
 
