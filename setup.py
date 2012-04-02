@@ -36,5 +36,6 @@ setup(
     platforms=['any'],
     classifiers=CLASSIFIERS,
     install_requires=[''],
-    package_data={'hunger': ['templates/hunger/*',]},
+    package_data={'hunger': ['templates/hunger/*',
+                             'templates/templated_email/hunger/*',]},
 )
