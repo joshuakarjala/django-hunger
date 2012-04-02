@@ -18,7 +18,6 @@ Installation
 Settings
 --------
 
-
 ``BETA_INVITE_CODE_LENGTH``
     String length of the invitation_code
 ``BETA_ENABLE_BETA``
@@ -48,7 +47,21 @@ Settings
 ``BETA_EMAIL_INVITE_FUNCTION``
     Function for sending out the invitation code
 
-Integrating with django_social_auth
+Integration with django_templated_email
+---------------------------------------
+
+If django_templated_email is installed, you can use customized
+``*.email`` templates with an example setting such as::
+
+   BETA_EMAIL_TEMPLATES_DIR = 'beta'
+
+And create the following templates::
+
+   ``<project_dir>/templates/templated_email/beta/beta_confirm.email``
+   ``<project_dir>/templates/templated_email/beta/beta_invite.email``
+
+
+Integration with django_social_auth
 -----------------------------------
 
 Modify ``SOCIAL_AUTH_PIPELINE`` in settings to replace

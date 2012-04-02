@@ -1,0 +1,9 @@
+{% block subject %}Here is your invite{% endblock %}
+
+{% block plain %}
+  Visit {{ request.get_host }}/invites/verify/{{ code }}/ to join the private beta.
+{% endblock %}
+
+{% block html %}
+  Visit <a href="{{ request.get_host }}/invites/verify/{{ code }}/" target="_blank">{{ request.get_host }}/invites/verify/{{ code }}/</a> to join the private beta.
+{% endblock %}
