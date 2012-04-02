@@ -50,15 +50,17 @@ Settings
 Integration with django_templated_email
 ---------------------------------------
 
-If django_templated_email is installed, you can use customized
-``*.email`` templates with an example setting such as::
+If
+`django_templated_email<github.com/bradwhittington/django-templated-email/>`_
+is installed, you can use customized ``*.email`` templates with an
+example setting such as::
 
    BETA_EMAIL_TEMPLATES_DIR = 'beta'
 
 And create the following templates::
 
-   ``<project_dir>/templates/templated_email/beta/beta_confirm.email``
-   ``<project_dir>/templates/templated_email/beta/beta_invite.email``
+   <project_dir>/templates/templated_email/beta/beta_confirm.email
+   <project_dir>/templates/templated_email/beta/beta_invite.email
 
 
 Integration with django_social_auth
