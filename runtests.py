@@ -17,7 +17,6 @@ if not settings.configured:
                 'TEST_NAME': 'hunger_tests.db',
             },
         },
-        # HACK: this fixes our threaded runserver remote tests
         DATABASE_NAME='test_hunger',
         TEST_DATABASE_NAME='hunger_tests.db',
         INSTALLED_APPS=[
