@@ -33,7 +33,7 @@ Settings
 ``BETA_SIGNUP_VIEWS``
     Which views are used for signing up
 ``BETA_SIGNUP_CONFIRMATION_VIEW``
-    The view which comes directly after a user hass signed up
+    The view which comes directly after a user has signed up
 ``BETA_REDIRECT_URL``
     If user is not logged in and trying to access a hidden view - where should he/she be redirected
 ``BETA_SIGNUP_URL``
@@ -73,7 +73,7 @@ Modify ``SOCIAL_AUTH_PIPELINE`` in settings to replace
         'social_auth.backends.pipeline.social.social_auth_user',
         'social_auth.backends.pipeline.associate.associate_by_email',
         'social_auth.backends.pipeline.user.get_username',
-        'hunger.contrib.social_auth.create_beta_user',
+        'hunger.contrib.social_auth_pipeline.create_beta_user',
         'social_auth.backends.pipeline.social.associate_user',
         'social_auth.backends.pipeline.social.load_extra_data',
         'social_auth.backends.pipeline.user.update_user_details'

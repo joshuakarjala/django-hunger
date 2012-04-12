@@ -99,7 +99,8 @@ class BetaMiddleware(object):
             #if beta code is valid and trying to register then let them through
             return
         else:
-            next_page = request.META.get('REQUEST_URI')
+            # next_page = request.META.get('REQUEST_URI')
+            next_page = request.path
             if in_beta:
                 return HttpResponseRedirect(self.signup_url + '?next=%s' % next_page)
             else:

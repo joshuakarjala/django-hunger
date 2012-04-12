@@ -20,6 +20,10 @@ CLASSIFIERS = [
     'Framework :: Django',
 ]
 
+tests_require = [
+    'Django>=1.3',
+]
+
 setup(
     name='django-hunger',
     version=version_str,
@@ -36,6 +40,10 @@ setup(
     platforms=['any'],
     classifiers=CLASSIFIERS,
     install_requires=[''],
+    tests_require=tests_require,
+    extras_require={'test': tests_require},
+    test_suite='runtests.runtests',
+    include_package_data=True,
     package_data={'hunger': ['templates/hunger/*',
                              'templates/templated_email/hunger/*',]},
-)
+    )
