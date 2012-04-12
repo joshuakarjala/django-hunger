@@ -1,9 +1,10 @@
 Hunger
 ======
 
-Django app to manage a private beta phase for a website.
+.. image:: https://secure.travis-ci.org/yesimon/django-hunger.png?branch=master
+   :target: http://travis-ci.org/yesimon/django-hunger
 
-{<img src="https://secure.travis-ci.org/yesimon/django-hunger.png" />}[http://travis-ci.org/yesimon/django-hunger]
+Django app to manage a private beta phase for a website.
 
 - This app provides users with the change to sign up for a private beta - by providing their email address.
 - The administrators of the website can manually invite people to join the beta from the Django admin panel.
