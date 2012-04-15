@@ -1,8 +1,8 @@
 Hunger
 ======
 
-.. image:: https://secure.travis-ci.org/yesimon/django-hunger.png?branch=master
-   :target: http://travis-ci.org/yesimon/django-hunger
+.. image:: https://secure.travis-ci.org/joshuakarjala/django-hunger.png?branch=master
+   :target: http://travis-ci.org/joshuakarjala/django-hunger
 
 Django app to manage a private beta phase for a website.
 
