@@ -21,7 +21,8 @@ def beta_confirm(email, **kwargs):
     context_dict = kwargs.copy()
     if templated_email_available:
         send_templated_mail(
-            template_name=os.path.join(templates_folder, 'beta_confirm'),
+            template_dir=templates_folder,
+            template_name='beta_confirm',
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,
@@ -52,7 +53,8 @@ def beta_invite(email, code, **kwargs):
 
     if templated_email_available:
         send_templated_mail(
-            template_name=os.path.join(templates_folder, 'beta_invite'),
+            template_dir=templates_folder,
+            template_name='beta_invite',
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,

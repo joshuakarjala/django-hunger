@@ -61,8 +61,8 @@ example setting such as::
 
 And create the following templates::
 
-   <project_dir>/templates/templated_email/beta/beta_confirm.email
-   <project_dir>/templates/templated_email/beta/beta_invite.email
+   <project_dir>/templates/beta/beta_confirm.email
+   <project_dir>/templates/beta/beta_invite.email
 
 
 Integration with django_social_auth
