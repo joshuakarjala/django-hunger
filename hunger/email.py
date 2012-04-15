@@ -17,12 +17,17 @@ def beta_confirm(email, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     from_email = setting('EMAIL_HOST_USER')
+    if templates_folder == 'hunger':
+        file_extension = 'email'
+    else:
+        file_extension = None
 
     context_dict = kwargs.copy()
     if templated_email_available:
         send_templated_mail(
             template_dir=templates_folder,
             template_name='beta_confirm',
+            file_extension=file_extension,
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,
@@ -50,11 +55,16 @@ def beta_invite(email, code, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     from_email = setting('EMAIL_HOST_USER')
+    if templates_folder == 'hunger':
+        file_extension = 'email'
+    else:
+        file_extension = None
 
     if templated_email_available:
         send_templated_mail(
             template_dir=templates_folder,
             template_name='beta_invite',
+            file_extension=file_extension,
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,
