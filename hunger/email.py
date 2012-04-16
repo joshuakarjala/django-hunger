@@ -16,7 +16,7 @@ def beta_confirm(email, **kwargs):
     """
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
-    templates_folder = os.path.path.join(templates_folder, '')
+    templates_folder = os.path.join(templates_folder, '')
     from_email = setting('EMAIL_HOST_USER')
     if templates_folder == 'hunger':
         file_extension = 'email'
@@ -55,7 +55,7 @@ def beta_invite(email, code, **kwargs):
     context = Context(context_dict)
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
-    templates_folder = os.path.path.join(templates_folder, '')
+    templates_folder = os.path.join(templates_folder, '')
     from_email = setting('EMAIL_HOST_USER')
     if templates_folder == 'hunger':
         file_extension = 'email'
