@@ -13,17 +13,19 @@ def create_beta_user(backend, details, response, uid, username, user=None,
     if not username:
         return None
 
-    request = kwargs['request']
-    invitation_code = request.COOKIES.get('invitation_code', False)
-    if not invitation_code:
-        return HttpResponseRedirect(setting('BETA_REDIRECT_URL'))
-    valid, exists = InvitationCode.validate_code(invitation_code)
-    if not valid:
-        return HttpResponseRedirect(setting('BETA_REDIRECT_URL'))
+    if setting('BETA_ENABLE_BETA', True):
+        request = kwargs['request']
+        invitation_code = request.COOKIES.get('invitation_code', False)
+        if not invitation_code:
+            return HttpResponseRedirect(setting('BETA_REDIRECT_URL'))
+        valid, exists = InvitationCode.validate_code(invitation_code)
+        if not valid:
+            return HttpResponseRedirect(setting('BETA_REDIRECT_URL'))
 
     email = details.get('email')
     user = User.objects.create_user(username=username, email=email)
-    invite_used.send(sender=user, user=user, invitation_code=invitation_code)
+    if setting('BETA_ENABLE_BETA', True):
+        invite_used.send(sender=user, user=user, invitation_code=invitation_code)
 
     return {
         'user': user,
