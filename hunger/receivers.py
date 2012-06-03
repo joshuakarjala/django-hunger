@@ -1,7 +1,8 @@
 import datetime
 import importlib
+
 from hunger.models import InvitationCode
-from hunger.utils import setting
+from hunger.utils import setting, now
 
 
 def invitation_code_created(sender, email, **kwargs):
@@ -21,7 +22,7 @@ def invitation_code_sent(sender, email, invitation_code, **kwargs):
         return
 
     invitation_code.is_invited = True
-    invitation_code.invited = datetime.datetime.now()
+    invitation_code.invited = now()
     invitation_code.save()
 
     email_module_name = setting('BETA_EMAIL_MODULE', 'hunger.email')
@@ -40,5 +41,5 @@ def invitation_code_used(sender, user, invitation_code, **kwargs):
 
     invitation_code.user = user
     invitation_code.is_used = True
-    invitation_code.used = datetime.datetime.now()
+    invitation_code.used = now()
     invitation_code.save()

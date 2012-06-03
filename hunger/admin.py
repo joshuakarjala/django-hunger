@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from hunger.models import InvitationCode
 from hunger.signals import invite_sent
 from hunger.receivers import invitation_code_sent
@@ -11,8 +11,6 @@ from hunger.receivers import invitation_code_sent
 invite_sent.connect(invitation_code_sent)
 
 def export_email(self, request, queryset):
-    emails = ""
-
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=email.csv'
     writer = csv.writer(response)
@@ -90,8 +88,6 @@ def resend_invite(self, request, queryset):
 
 class InvitationCodeAdmin(admin.ModelAdmin):
     """Admin for invitation code"""
-    #fields = ('code', 'is_used', 'is_invited', 'user', 'email', 'created', 'invited', 'used', )
-    #readonly_fields = ('code', 'is_used', 'is_invited', 'email', 'user', 'created', 'invited', 'used', )
     list_display = ('code', 'is_used', 'is_invited', 'email', 'user', 'created', 'invited', 'used', )
     list_filter = ('is_used', 'is_invited', 'created', 'invited', 'used')
     search_fields = ['email']

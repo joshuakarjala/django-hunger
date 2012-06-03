@@ -68,7 +68,10 @@ class BetaMiddleware(object):
                                'django.contrib.staticfiles.views',
                                'hunger.views']
 
-        full_view_name = '%s.%s' % (view_func.__module__, view_func.__name__)
+        short_name = view_func.__class__.__name__
+        if short_name == 'function':
+            short_name = view_func.__name__
+        full_view_name = '%s.%s' % (view_func.__module__, short_name)
 
         #Check modules
         if self.always_allow_modules:
