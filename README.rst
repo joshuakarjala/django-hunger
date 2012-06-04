@@ -14,9 +14,15 @@ Django app to manage a private beta phase for a website.
 Installation
 ------------
 
-- Install django-hunger into your site-packages
-- Add 'hunger.middleware.BetaMiddleware' to MIDDLEWARE_CLASSES
-
+- Install ``django-hunger`` using ``pip`` or ``easy_install``.
+- Add ``hunger`` to ``INSTALLED_APPS`` in settings.py.
+- Add ``hunger.middleware.BetaMiddleware`` to ``MIDDLEWARE_CLASSES``.
+- Create templates ``beta/request_invite.html``,
+  ``beta/confirmation.html``, and ``beta/used.html``. The
+  ``request_invite.html`` template receives a Context instance with a
+  Django form for the email signup form. The ``confirmation.html`` and
+  ``used.html`` templates are flatpages for confirming signup and used
+  invites.
 
 Settings
 --------
