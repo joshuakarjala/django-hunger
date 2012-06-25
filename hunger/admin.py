@@ -1,16 +1,16 @@
 import csv
 from datetime import datetime
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse
 from hunger.models import InvitationCode
 from hunger.signals import invite_sent
 from hunger.receivers import invitation_code_sent
 
-#setup signal
+
 invite_sent.connect(invitation_code_sent)
 
-def export_email(self, request, queryset):
+
+def export_email(modeladmin, request, queryset):
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=email.csv'
     writer = csv.writer(response)
@@ -39,51 +39,21 @@ def export_email(self, request, queryset):
     # Return CSV file to browser as download
     return response
 
-def send_invite(self, request, queryset):
-    obj = queryset[0]
-    email_col = 0
-    code_col = 0
 
-    for field in obj._meta.fields:
-        if field.get_attname() == "email":
-            break
-        email_col = email_col + 1
-
-    for field in obj._meta.fields:
-        if field.get_attname() == "code":
-            break
-        code_col = code_col + 1
-
+def send_invite(modeladmin, request, queryset):
     for obj in queryset:
-        email = obj._meta.fields[email_col].value_to_string(obj)
-        code = obj._meta.fields[code_col].value_to_string(obj)
-
         if not obj.is_invited:
-            invite_sent.send(sender=self.__class__, email=email,
-                             invitation_code=code, request=request)
+            invite_sent.send(sender=modeladmin.__class__, email=obj.email,
+                             invitation_code=obj.code,
+                             user=obj.user, request=request)
 
-def resend_invite(self, request, queryset):
-    obj = queryset[0]
-    email_col = 0
-    code_col = 0
 
-    for field in obj._meta.fields:
-        if field.get_attname() == "email":
-            break
-        email_col = email_col + 1
-
-    for field in obj._meta.fields:
-        if field.get_attname() == "code":
-            break
-        code_col = code_col + 1
-
+def resend_invite(modeladmin, request, queryset):
     for obj in queryset:
-        email = obj._meta.fields[email_col].value_to_string(obj)
-        code = obj._meta.fields[code_col].value_to_string(obj)
-
         if obj.is_invited:
-            invite_sent.send(sender=self.__class__, email=email,
-                             invitation_code=code, request=request)
+            invite_sent.send(sender=modeladmin.__class__, email=obj.email,
+                             invitation_code=obj.code,
+                             user=obj.user, request=request)
 
 
 class InvitationCodeAdmin(admin.ModelAdmin):
