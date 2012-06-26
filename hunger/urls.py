@@ -1,8 +1,10 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url
+from .views import InvitationCodeCreate, ConfirmationView, UsedView
+
 
 urlpatterns = patterns('',
-    url(r'^$', 'hunger.views.invite', name='beta_invite'),
-    url(r'^sent/$', 'hunger.views.confirmation', name='beta_confirmation'),
     url(r'^verify/(\w+)/$', 'hunger.views.verify_invite', name='beta_verify_invite'),
-    url(r'^expired/$', 'hunger.views.expired', name='beta_used'),
+    url(r'^$', InvitationCodeCreate.as_view(), name='beta_invite'),
+    url(r'^sent/$', ConfirmationView.as_view(), name='beta_confirmation'),
+    url(r'^expired/$', UsedView.as_view(), name='beta_used'),
 )
