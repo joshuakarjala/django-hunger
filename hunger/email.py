@@ -17,7 +17,7 @@ def beta_confirm(email, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = setting('EMAIL_HOST_USER')
+    from_email = kwargs.get('from_email', None)
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -26,12 +26,12 @@ def beta_confirm(email, **kwargs):
     context_dict = kwargs.copy()
     if templated_email_available:
         send_templated_mail(
-            template_dir=templates_folder,
             template_name='beta_confirm',
-            file_extension=file_extension,
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,
+            template_dir=templates_folder,
+            file_extension=file_extension,
         )
     else:
         plaintext = get_template(os.path.join(templates_folder, 'beta_confirm.txt'))
@@ -56,7 +56,7 @@ def beta_invite(email, code, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = setting('EMAIL_HOST_USER')
+    from_email = kwargs.get('from_email', None)
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -64,12 +64,12 @@ def beta_invite(email, code, **kwargs):
 
     if templated_email_available:
         send_templated_mail(
-            template_dir=templates_folder,
             template_name='beta_invite',
-            file_extension=file_extension,
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,
+            template_dir=templates_folder,
+            file_extension=file_extension,
         )
     else:
         plaintext = get_template(os.path.join(templates_folder, 'beta_invite.txt'))
