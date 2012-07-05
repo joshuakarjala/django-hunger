@@ -1,11 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from hunger.models import InvitationCode
-from hunger.signals import invite_used
-from hunger.receivers import invitation_code_used
+from hunger.models import InvitationCode, Invitation
 
-#setup signals
-invite_used.connect(invitation_code_used)
 
 class BetaMiddleware(object):
     """
@@ -60,8 +56,6 @@ class BetaMiddleware(object):
             #Do nothing is beta is not activated
             return
 
-        invitation_code = request.COOKIES.get('invitation_code', '')
-        in_beta, exists = InvitationCode.validate_code(invitation_code)
         whitelisted_modules = ['django.contrib.auth.views',
                                'django.contrib.admin.sites',
                                'django.views.static',
@@ -91,10 +85,7 @@ class BetaMiddleware(object):
         if view_name in self.always_allow_views or full_view_name in self.always_allow_views:
             return
 
-        if view_name == self.signup_confirmation_view or full_view_name == self.signup_confirmation_view:
-            #signup completed - deactivate invitation code
-            request.session['beta_complete'] = True
-            invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
+        if full_view_name == self.signup_confirmation_view:
             return
 
         if request.user.is_authenticated() and full_view_name not in self.signup_views \
@@ -102,16 +93,12 @@ class BetaMiddleware(object):
             # User is logged in, or beta is not active, no need to check anything else.
             return
 
-        if (view_name in self.signup_views or full_view_name in self.signup_views) and in_beta:
+
+        if full_view_name in self.signup_views:
             #if beta code is valid and trying to register then let them through
             return
-        else:
-            # next_page = request.META.get('REQUEST_URI')
-            next_page = request.path
-            if in_beta:
-                return HttpResponseRedirect(self.signup_url + '?next=%s' % next_page)
-            else:
-                return HttpResponseRedirect(self.redirect_url + '?next=%s' % next_page)
+        next_page = request.path
+        return HttpResponseRedirect(self.redirect_url + '?next=%s' % next_page)
 
     def process_response(self, request, response):
         try:

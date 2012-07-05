@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import hunger
 
 DESCRIPTION = "A Django app to manage a private beta phase."
@@ -33,10 +33,7 @@ tests_require = [
 setup(
     name='django-hunger',
     version=version_str,
-    packages=[
-        'hunger',
-        'hunger.contrib',
-    ],
+    packages=find_packages(exclude=['tests']),
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
     url='https://github.com/joshuakarjala/django-hunger/',
@@ -50,6 +47,4 @@ setup(
     extras_require={'test': tests_require},
     test_suite='runtests.runtests',
     include_package_data=True,
-    package_data={'hunger': ['templates/hunger/*',
-                             'templates/templated_email/hunger/*',]},
     )

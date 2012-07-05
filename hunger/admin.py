@@ -2,12 +2,8 @@ import csv
 from datetime import datetime
 from django.contrib import admin
 from django.http import HttpResponse
-from hunger.models import InvitationCode
-from hunger.signals import invite_sent
-from hunger.receivers import invitation_code_sent
-
-
-invite_sent.connect(invitation_code_sent)
+from hunger.models import InvitationCode, Invitation
+from hunger.utils import now
 
 
 def export_email(modeladmin, request, queryset):
@@ -18,23 +14,22 @@ def export_email(modeladmin, request, queryset):
     writer.writerow(["email", "is_used", "is_invited", "created", "invited", "used"])
 
     for obj in queryset:
-        code = obj
-        email = code.email
-        is_used = code.is_used
-        is_invited = code.is_invited
+        code = obj.code
+        email = obj.user.email
+        is_used = obj.is_used
+        is_invited = obj.is_invited
         created = datetime.strftime(code.created, "%Y-%m-%d %H:%M:%S")
         try:
-            invited = datetime.strftime(code.invited, "%Y-%m-%d %H:%M:%S")
+            invited = datetime.strftime(obj.invited, "%Y-%m-%d %H:%M:%S")
         except TypeError:
             invited = ""
         try:
-            used = datetime.strftime(code.used, "%Y-%m-%d %H:%M:%S")
+            used = datetime.strftime(obj.used, "%Y-%m-%d %H:%M:%S")
         except TypeError:
             used = ""
 
-        if len(email) >0 and email != "None":
+        if email:
             row = [email, is_used, is_invited, created, invited, used]
-            row.append(email)
             writer.writerow(row)
     # Return CSV file to browser as download
     return response
@@ -43,24 +38,29 @@ def export_email(modeladmin, request, queryset):
 def send_invite(modeladmin, request, queryset):
     for obj in queryset:
         if not obj.is_invited:
-            invite_sent.send(sender=modeladmin.__class__, email=obj.email,
-                             invitation_code=obj.code,
-                             user=obj.user, request=request)
+            obj.invited = now()
+            obj.save(send_email=True, request=request)
 
 
 def resend_invite(modeladmin, request, queryset):
     for obj in queryset:
         if obj.is_invited:
-            invite_sent.send(sender=modeladmin.__class__, email=obj.email,
-                             invitation_code=obj.code,
-                             user=obj.user, request=request)
+            obj.save(send_email=True, request=request)
 
+
+class InvitationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'code', 'used', 'invited')
+    list_filter = ('code',)
+    search_fields = ['user__username', 'user__email']
+    actions = [send_invite, resend_invite, export_email]
 
 class InvitationCodeAdmin(admin.ModelAdmin):
     """Admin for invitation code"""
-    list_display = ('code', 'is_used', 'is_invited', 'email', 'user', 'created', 'invited', 'used', )
-    list_filter = ('is_used', 'is_invited', 'created', 'invited', 'used')
-    search_fields = ['email']
-    actions = [send_invite, resend_invite, export_email]
+    list_display = ('code', 'num_invites', 'created_by', 'created',  )
+    list_filter = ('created', )
+    filter_horizontal = ('invited_users', )
+    search_fields = ['created_by__email', 'created_by__username']
 
+
+admin.site.register(Invitation, InvitationAdmin)
 admin.site.register(InvitationCode, InvitationCodeAdmin)
