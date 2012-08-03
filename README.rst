@@ -23,6 +23,7 @@ Installation
   Django form for the email signup form. The ``confirmation.html`` and
   ``used.html`` templates are flatpages for confirming signup and used
   invites.
+- By default Hunger redirects to "/beta/" if a users is not logged in. So your "request_invite" templates should be located here. 
 
 Settings
 --------
