@@ -1,1 +1,1 @@
-Visit {{ request.get_host }}/invites/verify/{{ code }}/ to join the private beta.
+Visit {{ request.get_host }}{% url beta_verify_invite code %} to join the private beta.
