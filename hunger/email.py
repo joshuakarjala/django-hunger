@@ -17,7 +17,7 @@ def beta_confirm(email, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', None)
+    from_email = kwargs.get('from_email', setting("DEFAULT_FROM_EMAIL"))
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -40,7 +40,7 @@ def beta_confirm(email, **kwargs):
         text_content = plaintext.render(Context())
         html_content = html.render(Context())
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                                     headers={'From': 'Mailer <%s>' % from_email})
+                                     headers={'From': '%s' % from_email})
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
@@ -56,7 +56,7 @@ def beta_invite(email, code, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', None)
+    from_email = kwargs.get('from_email', setting("DEFAULT_FROM_EMAIL"))
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -79,6 +79,6 @@ def beta_invite(email, code, **kwargs):
         text_content = plaintext.render(context)
         html_content = html.render(context)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                                     headers={'From': 'Mailer <%s>' % from_email})
+                                     headers={'From': '%s' % from_email})
         msg.attach_alternative(html_content, "text/html")
         msg.send()
