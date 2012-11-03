@@ -29,33 +29,35 @@ Settings
 --------
 
 ``BETA_INVITE_CODE_LENGTH``
-    String length of the invitation_code
+    String length of the invitation_code (Default: ``8``)
 ``BETA_ENABLE_BETA``
-    Enable hunger middleware
+    Enable hunger middleware (Default: ``True``)
 ``BETA_NEVER_ALLOW_VIEWS``
-    Never allow access to these views
+    Never allow access to these views (Default: ``[]``)
 ``BETA_ALWAYS_ALLOW_VIEWS``
-    Always let unregistered user see these view
+    Always let unregistered user see these view (Default: ``[]``)
 ``BETA_ALWAYS_ALLOW_MODULES``
-    Convenience settings - allow all views and a given module
+    Convenience settings - allow all views and a given module (Default: ``[]``)
 ``BETA_ALLOW_FLATPAGES``
-    If using flatpages app
+    If using flatpages app (Default: ``[]``)
 ``BETA_SIGNUP_VIEWS``
-    Which views are used for signing up
+    Which views are used for signing up (Default: ``[]``)
 ``BETA_SIGNUP_CONFIRMATION_VIEW``
-    The view which comes directly after a user has signed up
+    The view which comes directly after a user has signed up (Default: ``''``)
 ``BETA_REDIRECT_URL``
-    If user is not logged in and trying to access a hidden view - where should he/she be redirected
+    If user is not logged in and trying to access a hidden view - where should
+    he/she be redirected (Default: ``/beta/``)
 ``BETA_SIGNUP_URL``
-    What is the url for the signup page
+    What is the url for the signup page (Default: ``/register/``)
 ``BETA_EMAIL_TEMPLATES_DIR``
-    Directory containing email templates
+    Directory containing email templates (Default: ``hunger``)
 ``BETA_EMAIL_MODULE``
-    Module where the email functions are
+    Module where the email functions are (Default: ``hunger.email``)
 ``BETA_EMAIL_CONFIRM_FUNCTION``
     Function for sending out confirmation that user is on waiting list
+    (Default: ``beta_confirm``)
 ``BETA_EMAIL_INVITE_FUNCTION``
-    Function for sending out the invitation code
+    Function for sending out the invitation code (Default: ``beta_invite``)
 
 Integration with django_templated_email
 ---------------------------------------
