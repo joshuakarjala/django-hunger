@@ -1,5 +1,6 @@
 import os.path
 from django.core.mail import EmailMultiAlternatives
+from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from django.template import Context
 from hunger.utils import setting
@@ -44,14 +45,17 @@ def beta_confirm(email, **kwargs):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
-def beta_invite(email, code, **kwargs):
+def beta_invite(email, code, request, **kwargs):
     """
     Email for sending out the invitation code to the user.
-    Invitation code is added to the context, so it can be rendered with standard
+    Invitation URL is added to the context, so it can be rendered with standard
     django template engine.
     """
     context_dict = kwargs.copy()
-    context_dict.setdefault('code', code)
+    context_dict.setdefault(
+        "invite_url",
+        request.build_absolute_uri(reverse("beta_verify_invite", args=[code]))
+    )
     context = Context(context_dict)
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
