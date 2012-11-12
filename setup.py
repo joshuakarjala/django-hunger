@@ -20,6 +20,12 @@ CLASSIFIERS = [
     'Framework :: Django',
 ]
 
+INSTALL_REQUIRES = ['']
+try:
+    import importlib
+except ImportError:
+    INSTALL_REQUIRES.append('importlib')
+
 tests_require = [
     'Django>=1.3',
 ]
@@ -39,7 +45,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     platforms=['any'],
     classifiers=CLASSIFIERS,
-    install_requires=[''],
+    install_requires=INSTALL_REQUIRES,
     tests_require=tests_require,
     extras_require={'test': tests_require},
     test_suite='runtests.runtests',
