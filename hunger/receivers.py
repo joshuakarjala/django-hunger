@@ -1,5 +1,8 @@
 import datetime
-import importlib
+try:
+    import importlib
+except ImportError:
+    from django.utils import importlib
 
 from hunger.models import InvitationCode
 from hunger.utils import setting, now
