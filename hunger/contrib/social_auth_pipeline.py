@@ -23,7 +23,7 @@ def create_beta_user(backend, details, response, uid, username, user=None,
             return HttpResponseRedirect(setting('BETA_REDIRECT_URL'))
 
     email = details.get('email')
-    user = UserSocialAuth.objects.create_user(username=username, email=email)
+    user = UserSocialAuth.create_user(username=username, email=email)
     if setting('BETA_ENABLE_BETA', True):
         invite_used.send(sender=user, user=user, invitation_code=invitation_code)
 
