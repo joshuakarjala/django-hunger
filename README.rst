@@ -38,6 +38,8 @@ Settings
     Always let unregistered user see these view (Default: ``[]``)
 ``BETA_ALWAYS_ALLOW_MODULES``
     Convenience settings - allow all views and a given module (Default: ``[]``)
+``BETA_ALWAYS_ALLOW_URLS``
+    Always let unregistered users see pages matching these urls (can also be regular expressions) (Default: ``[]``)
 ``BETA_ALLOW_FLATPAGES``
     If using flatpages app (Default: ``[]``)
 ``BETA_SIGNUP_VIEWS``

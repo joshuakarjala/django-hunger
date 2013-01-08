@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from hunger.models import InvitationCode
@@ -36,6 +38,9 @@ class BetaMiddleware(object):
         and ``privatebeta.views`` will pass through unless they are
         explicitly prohibited in ``PRIVATEBETA_NEVER_ALLOW_VIEWS``
 
+    ``BETA_ALWAYS_ALLOW_URLS``
+        A list of regex matching urls that should pass through.
+
     ``BETA_REDIRECT_URL``
         The URL to redirect to.  Can be relative or absolute.
     """
@@ -45,6 +50,7 @@ class BetaMiddleware(object):
         self.never_allow_views = getattr(settings, 'BETA_NEVER_ALLOW_VIEWS', [])
         self.always_allow_views = getattr(settings, 'BETA_ALWAYS_ALLOW_VIEWS', [])
         self.always_allow_modules = getattr(settings, 'BETA_ALWAYS_ALLOW_MODULES', [])
+        self.always_allow_urls = getattr(settings, 'BETA_ALWAYS_ALLOW_URLS', [])
         self.redirect_url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
         self.signup_views = getattr(settings, 'BETA_SIGNUP_VIEWS', [])
         self.signup_confirmation_view = getattr(settings, 'BETA_SIGNUP_CONFIRMATION_VIEW', '')
@@ -86,6 +92,9 @@ class BetaMiddleware(object):
             return HttpResponseRedirect(self.redirect_url)
 
         if full_view_name in self.always_allow_views:
+            return
+
+        if any(re.match(regex, request.path) for regex in self.always_allow_urls):
             return
 
         if full_view_name == self.signup_confirmation_view:
