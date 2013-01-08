@@ -38,6 +38,10 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('always_allow_module'))
         self.assertEqual(response.status_code, 200)
 
+    def test_always_allow_url(self):
+        response = self.client.get(reverse('always_allow_url'))
+        self.assertEqual(response.status_code, 200)
+
     def test_garden_when_not_logged_in(self):
         response = self.client.get(reverse('logged_in_only'))
         self.assertRedirects(response,

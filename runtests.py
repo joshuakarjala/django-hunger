@@ -46,6 +46,7 @@ if not settings.configured:
         BETA_ALWAYS_ALLOW_VIEWS=[
             'tests.views.always_allow',
         ],
+        BETA_ALWAYS_ALLOW_URLS=['/always-allow-url/'],
         BETA_REDIRECT_URL='/',
         BETA_ALWAYS_ALLOW_MODULES=['tests.always_allow_views'],
         BETA_SIGNUP_VIEWS=['tests.views.signup'],
