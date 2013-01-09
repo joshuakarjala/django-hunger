@@ -11,7 +11,7 @@ def export_email(modeladmin, request, queryset):
     response['Content-Disposition'] = 'attachment; filename=email.csv'
     writer = csv.writer(response)
 
-    writer.writerow(['email', 'is_used', 'is_invited', 'created', 'invited', 'used'])
+    writer.writerow(['email', 'created', 'invited', 'used'])
 
     for obj in queryset:
         code = obj.code

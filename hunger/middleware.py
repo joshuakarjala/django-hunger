@@ -73,7 +73,6 @@ class BetaMiddleware(object):
         if full_view_name in self.always_allow_views:
             return
 
-        next_page = request.path
         if not request.user.is_authenticated():
             return redirect(self.redirect)
 

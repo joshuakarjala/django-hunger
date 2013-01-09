@@ -7,6 +7,7 @@ from hunger import forms
 from hunger.utils import setting, now
 from hunger.models import Invitation, InvitationCode
 
+
 class BetaViewTests(TestCase):
     urls = 'tests.urls'
 

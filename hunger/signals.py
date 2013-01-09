@@ -12,9 +12,9 @@ def invitation_created(sender, invitation, **kwargs):
 
     Sender should always be Invitation instance.
     """
-    email_module_name = setting('BETA_EMAIL_MODULE', 'hunger.email')
+    email_module_name = setting('HUNGER_EMAIL_MODULE', 'hunger.email')
     email_module = importlib.import_module(email_module_name)
-    email_function_name = setting('BETA_EMAIL_CONFIRM_FUNCTION', 'beta_confirm')
+    email_function_name = setting('HUNGER_EMAIL_CONFIRM_FUNCTION', 'beta_confirm')
     email_function = getattr(email_module, email_function_name)
     email_function(invitation.user.email, **kwargs)
 

@@ -13,25 +13,13 @@ class Invitation(models.Model):
     invited = models.DateTimeField(_('Invited'), blank=True, null=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
 
-    @property
-    def is_used(self):
-        if self.used:
-            return True
-        return False
-
-    @property
-    def is_invited(self):
-        if self.invited:
-            return True
-        return False
-
     def save(self, *args, **kwargs):
         send_email = kwargs.pop('send_email', False)
         request = kwargs.pop('request', None)
-        if send_email and not self.is_invited:
+        if send_email and not self.invited:
             invite_created.send(sender=self.__class__, invitation=self,
                                 request=request, user=self.user)
-        if send_email and self.is_invited and not self.is_used:
+        if send_email and self.invited and not self.used:
             invite_sent.send(sender=self.__class__, invitation=self,
                              request=request, user=self.user)
         super(Invitation, self).save(*args, **kwargs)
@@ -52,13 +40,12 @@ class InvitationCode(models.Model):
     owner = models.ForeignKey(User, related_name='created_invitations',
         blank=True, null=True)
 
-
     def __unicode__(self):
         return self.code
 
     def remaining_invites(self):
         """The number of invites remaining for this code."""
-        return max([0, self.num_invites - self.invited_users.count()])
+        return max([0, self.max_invites - self.invited_users.count()])
 
     def generate_invite_code(self):
         return ''.join(random.choice(string.letters) for i in range(16))
