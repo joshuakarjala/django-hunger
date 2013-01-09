@@ -34,6 +34,19 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('always_allow'))
         self.assertEqual(response.status_code, 200)
 
+    def test_never_allow_view_by_name(self):
+        response = self.client.get(reverse('deny_me'))
+        self.assertRedirects(response, self.redirect_url)
+
+    def test_always_allow_view_by_name(self):
+        response = self.client.get(reverse('allow_me'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_never_allow_view_without_name(self):
+        url = '/view-with-no-name/'
+        response = self.client.get(url)
+        self.assertRedirects(response, '{0}?next={1}'.format(self.redirect_url, url))
+
     def test_always_allow_module(self):
         response = self.client.get(reverse('always_allow_module'))
         self.assertEqual(response.status_code, 200)
