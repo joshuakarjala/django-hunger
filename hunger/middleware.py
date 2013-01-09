@@ -1,6 +1,9 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+from django.db.models import Q
 from hunger.models import InvitationCode, Invitation
+from hunger.utils import setting, now
 
 
 class BetaMiddleware(object):
@@ -12,49 +15,42 @@ class BetaMiddleware(object):
 
     **Settings:**
 
-    ``BETA_ENABLE_BETA``
-        Whether or not the beta middleware should be used. If set to `False`
-        the PrivateBetaMiddleware middleware will be ignored and the request
-        will be returned. This is useful if you want to disable privatebeta
-        on a development machine. Default is `True`.
+    ``HUNGER_ENABLE_BETA``
+        Whether or not the beta middleware should be used. If set to
+        `False` the BetaMiddleware middleware will be ignored and the
+        request will be returned. This is useful if you want to
+        disable privatebeta on a development machine. Default is
+        `True`.
 
-    ``BETA_NEVER_ALLOW_VIEWS``
-        A list of view names that should *never* be displayed.  This
-        list is checked before the others so that this middleware exhibits
-        deny then allow behavior.
+    ``HUNGER_ALWAYS_ALLOW_VIEWS``
+        A list of full view names that should always pass through.
 
-    ``BETA_ALWAYS_ALLOW_VIEWS``
-        A list of view names that should always pass through.
-
-    ``BETA_ALWAYS_ALLOW_MODULES``
+    ``HUNGER_ALWAYS_ALLOW_MODULES``
         A list of modules that should always pass through.  All
         views in ``django.contrib.auth.views``, ``django.views.static``
-        and ``privatebeta.views`` will pass through unless they are
-        explicitly prohibited in ``PRIVATEBETA_NEVER_ALLOW_VIEWS``
+        and ``hunger.views`` will pass through.
 
-    ``BETA_REDIRECT_URL``
-        The URL to redirect to.  Can be relative or absolute.
+    ``HUNGER_REDIRECT``
+        The redirect when not in beta.
     """
 
     def __init__(self):
-        self.enable_beta = getattr(settings, 'BETA_ENABLE_BETA', True)
-        self.never_allow_views = getattr(settings, 'BETA_NEVER_ALLOW_VIEWS', [])
-        self.always_allow_views = getattr(settings, 'BETA_ALWAYS_ALLOW_VIEWS', [])
-        self.always_allow_modules = getattr(settings, 'BETA_ALWAYS_ALLOW_MODULES', [])
-        self.redirect_url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
-        self.signup_views = getattr(settings, 'BETA_SIGNUP_VIEWS', [])
-        self.signup_confirmation_view = getattr(settings, 'BETA_SIGNUP_CONFIRMATION_VIEW', '')
-        self.signup_url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
-        self.allow_flatpages = getattr(settings, 'BETA_ALLOW_FLATPAGES', [])
+        self.enable_beta = setting('HUNGER_ENABLE')
+
+        self.always_allow_views = setting('HUNGER_ALWAYS_ALLOW_VIEWS')
+        self.always_allow_modules = setting('HUNGER_ALWAYS_ALLOW_MODULES')
+        self.redirect = setting('HUNGER_REDIRECT')
+        self.allow_flatpages = setting('HUNGER_ALLOW_FLATPAGES')
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if request.path in self.allow_flatpages or '%s/' % request.path in self.allow_flatpages:
+        if not self.enable_beta:
+            return
+
+        if (request.path in self.allow_flatpages or
+            (getattr(settings, 'APPEND_SLASH', True) and
+             '%s/' % request.path in self.allow_flatpages)):
             from django.contrib.flatpages.views import flatpage
             return flatpage(request, request.path_info)
-
-        if not self.enable_beta:
-            #Do nothing is beta is not activated
-            return
 
         whitelisted_modules = ['django.contrib.auth.views',
                                'django.contrib.admin.sites',
@@ -68,45 +64,97 @@ class BetaMiddleware(object):
         view_name = self._get_view_name(request)
         full_view_name = '%s.%s' % (view_func.__module__, short_name)
 
-        #Check modules
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
 
-        #if view in module then ignore - except if view is signup confirmation
-        if '%s' % view_func.__module__ in whitelisted_modules \
-                and not view_name == self.signup_confirmation_view \
-                and not full_view_name == self.signup_confirmation_view:
+        if '%s' % view_func.__module__ in whitelisted_modules:
             return
 
-        #Check views
-        if view_name in self.never_allow_views or full_view_name in self.never_allow_views:
-            return HttpResponseRedirect(self.redirect_url)
-
-        if view_name in self.always_allow_views or full_view_name in self.always_allow_views:
+        if full_view_name in self.always_allow_views:
             return
 
-        if full_view_name == self.signup_confirmation_view:
-            return
-
-        if request.user.is_authenticated() and full_view_name not in self.signup_views \
-                and view_name not in self.signup_views:
-            # User is logged in, or beta is not active, no need to check anything else.
-            return
-
-
-        if full_view_name in self.signup_views:
-            #if beta code is valid and trying to register then let them through
-            return
         next_page = request.path
-        return HttpResponseRedirect(self.redirect_url + '?next=%s' % next_page)
+        if not request.user.is_authenticated():
+            return redirect(self.redirect)
+
+        # Prevent queries by caching in_beta status in session
+        if request.session.get('hunger_in_beta'):
+            return
+
+
+        cookie_code = request.COOKIES.get('hunger_code')
+        invitations = Invitation.objects.filter(
+            Q(user=request.user) |
+            Q(email=request.user.email)
+            ).select_related('code')
+
+        # User already in the beta - cache in_beta in session
+        if any([i.used for i in invitations if i.invited]):
+            request.session['hunger_in_beta'] = True
+            return
+
+        # User has been invited - use the invitation and place in beta.
+        activates = [i for i in invitations if i.invited and not i.used]
+
+        # Check for matching cookie code if available.
+        if cookie_code:
+            for invitation in activates:
+                if invitation.code.code == cookie_code:
+                    # Invitation may be attached to email
+                    invitation.user = request.user
+                    invitation.used = now()
+                    invitation.save()
+                    request.session['hunger_in_beta'] = True
+                    request._hunger_delete_cookie = True
+                    return
+
+        # No cookie - let's just choose the first invitation if it exists
+        if activates:
+            invitation = activates[0]
+            # Invitation may be attached to email
+            invitation.user = request.user
+            invitation.used = now()
+            invitation.save()
+            request.session['hunger_in_beta'] = True
+            return
+
+
+        if not cookie_code:
+            if not invitations:
+                invitation = Invitation(user=request.user)
+                invitation.save()
+                return redirect(self.redirect)
+
+        # No invitation, all we have is this cookie code
+        try:
+            code = InvitationCode.objects.get(code=cookie_code,
+                num_invites__gt=0)
+        except InvitationCode.DoesNotExist:
+            request._hunger_delete_cookie = True
+            return redirect(self.redirect)
+
+        right_now = now()
+        if code.private:
+            # If we got here, we're trying to fix up a previous private
+            # invitation to the correct user/email.
+            invitation = Invitation.objects.filter(code=code)[0]
+            invitation.user = request.user
+            invitation.invited = right_now
+            invitation.used = right_now
+            code.num_invites = 0
+        else:
+            invitation = Invitation(user=request.user,
+                                    code=code,
+                                    invited=right_now,
+                                    used=right_now)
+            code.num_invites -= 1
+        invitation.save()
+        code.save()
+        return
 
     def process_response(self, request, response):
-        try:
-            if request.session.get('beta_complete', False):
-                response.delete_cookie('invitation_code')
-                request.session['beta_complete'] = None
-        except AttributeError:
-            pass
+        if getattr(request, '_hunger_delete_cookie', False):
+            response.delete_cookie('hunger_code')
         return response
 
     @staticmethod

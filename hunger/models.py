@@ -6,10 +6,12 @@ from hunger.utils import setting
 from hunger.signals import invite_created, invite_sent
 
 class Invitation(models.Model):
-    user = models.ForeignKey(User)
-    code = models.ForeignKey('InvitationCode')
+    user = models.ForeignKey(User, blank=True, null=True)
+    email = models.EmailField(_('Email'), blank=True, null=True)
+    code = models.ForeignKey('InvitationCode', blank=True, null=True)
     used = models.DateTimeField(_('Used'), blank=True, null=True)
     invited = models.DateTimeField(_('Invited'), blank=True, null=True)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
 
     @property
     def is_used(self):
@@ -40,13 +42,16 @@ class Invitation(models.Model):
 
 class InvitationCode(models.Model):
     code = models.CharField(_('Invitation code'), max_length=30, unique=True)
+    private = models.BooleanField(default=True)
+    max_invites = models.PositiveIntegerField(
+        _('Max number of invitations'), default=1)
     num_invites = models.PositiveIntegerField(
-        _('Number of invitations'), default=1)
+        _('Remaining invitations'), default=1)
     invited_users = models.ManyToManyField(User,
         related_name='invitations', through='Invitation')
-    created_by = models.ForeignKey(User, related_name='created_invitations',
+    owner = models.ForeignKey(User, related_name='created_invitations',
         blank=True, null=True)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
+
 
     def __unicode__(self):
         return self.code
@@ -55,24 +60,11 @@ class InvitationCode(models.Model):
         """The number of invites remaining for this code."""
         return max([0, self.num_invites - self.invited_users.count()])
 
-    @classmethod
-    def generate_invite_code(cls):
-        num_chars = setting('BETA_INVITE_CODE_LENGTH', 8)
-        return ''.join(random.choice(string.letters) for i in range(num_chars))
+    def generate_invite_code(self):
+        return ''.join(random.choice(string.letters) for i in range(16))
 
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = self.generate_invite_code()
+        # self.num_invites = self.max_invites - self.invited_users.count()
         super(InvitationCode, self).save(*args, **kwargs)
-
-    @classmethod
-    def validate_code(cls, code):
-        """Returns (valid, exists)."""
-        try:
-            invitation_code = InvitationCode.objects.get(code=code)
-            if invitation_code.is_used:
-                return False, True
-            else:
-                return True, True
-        except InvitationCode.DoesNotExist:
-            return False, False

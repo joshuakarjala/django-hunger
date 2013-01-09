@@ -1,34 +1,59 @@
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.test import TestCase
 
 from hunger import forms
-from hunger.utils import setting
-from hunger.models import InvitationCode
+from hunger.utils import setting, now
+from hunger.models import Invitation, InvitationCode
 
 class BetaViewTests(TestCase):
     urls = 'tests.urls'
 
-    redirect_url = setting('BETA_REDIRECT_URL', '/beta/')
-    signup_url = setting('BETA_SIGNUP_URL', '/register/')
-    signup_confirmation_view = setting('BETA_SIGNUP_CONFIRMATION_VIEW', '')
+    redirect = setting('HUNGER_REDIRECT')
 
-    def test_request_invite(self):
+    def create_invite(self, email):
+        code = InvitationCode(num_invites=0)
+        code.save()
+        invitation = Invitation(code=code, email=email, invited=now())
+        invitation.save()
+        return invitation
+
+    def create_code(self, private=True, email=''):
+        code = InvitationCode(private=private)
+        code.save()
+        if private:
+            invitation = Invitation(code=code, email=email, invited=now())
+            invitation.save()
+        return code
+
+    def setUp(self):
+        """Creates a few basic users.
+
+        Alice is registered but not in beta
+        Bob is registered and in beta (self-signup)
+        Charlie is in beta and has one invite
+        """
+        self.alice = User.objects.create_user('alice', 'alice@example.com', 'secret')
+        self.bob = User.objects.create_user('bob', 'bob@example.com', 'secret')
+        right_now = now()
+        invitation = Invitation(user=self.bob, invited=right_now, used=right_now)
+        invitation.save()
+
+        self.charlie = User.objects.create_user('charlie', 'charlie@example.com', 'secret')
+        invitation = Invitation(user=self.charlie, invited=right_now, used=right_now)
+        invitation.save()
+        code = InvitationCode(owner=self.charlie)
+        code.save()
+
+
+    def notest_request_invite(self):
         """ Requesting an invite should generate a form and correct template."""
-        response = self.client.get(reverse('beta_invite'))
+        response = self.client.get('hunger_invite')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'beta/request_invite.html')
         self.failUnless(isinstance(response.context['form'],
-                                   forms.InviteRequestForm))
-
-    def test_request_invite_success(self):
-        response = self.client.post(reverse('beta_invite'),
-                                    data={'email': 'test@example.com'})
-        self.assertRedirects(response, reverse('beta_confirmation'))
-
-    def test_never_allow_view(self):
-        response = self.client.get(reverse('never_allow'))
-        self.assertRedirects(response, self.redirect_url)
+                                   forms.InviteSendForm))
 
     def test_always_allow_view(self):
         response = self.client.get(reverse('always_allow'))
@@ -51,32 +76,63 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('always_allow_module'))
         self.assertEqual(response.status_code, 200)
 
-    def test_garden_when_not_logged_in(self):
-        response = self.client.get(reverse('logged_in_only'))
-        self.assertRedirects(response,
-                             reverse('beta_invite') + '?next=%s' % reverse('logged_in_only'))
-
-    def test_garden_when_logged_in(self):
-        User.objects.create_user('alice', 'alice@example.com', 'secret')
-        self.client.login(username='alice', password='secret')
-        response = self.client.get(reverse('logged_in_only'))
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
+    def test_garden_when_not_invited(self):
+        response = self.client.get(reverse('invited_only'))
+        self.assertRedirects(response, reverse(self.redirect))
 
     def test_using_invite(self):
-        invitation = InvitationCode(email='alice@example.com')
-        invitation.save()
-        response = self.client.get(reverse('beta_verify_invite', args=[invitation.code]))
-        self.assertRedirects(response, self.signup_url)
-        User.objects.create_user('alice', 'alice@example.com', 'secret')
-        self.client.login(username='alice', password='secret')
-        response = self.client.get(reverse(self.signup_confirmation_view))
-        response = self.client.get(reverse('beta_verify_invite', args=[invitation.code]))
-        self.assertRedirects(response, reverse('beta_used'))
+        cary = User.objects.create_user('cary', 'cary@example.com', 'secret')
+        self.client.login(username='cary', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        self.assertRedirects(response, reverse(self.redirect))
 
-    def test_invalid_invite(self):
-        code = 'xoxoxoxo'
-        with self.assertRaises(InvitationCode.DoesNotExist):
-            InvitationCode.objects.get(code=code)
-        response = self.client.get(reverse('beta_verify_invite', args=[code]))
-        self.assertRedirects(response, self.redirect_url)
+        response = self.client.get(reverse('invited_only'))
+        self.assertRedirects(response, reverse(self.redirect))
+        invitation = Invitation.objects.get(user=cary)
+        invitation.invited = now()
+        invitation.save()
+        response = self.client.get(reverse('invited_only'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_invite(self):
+        self.client.login(username='charlie', password='secret')
+        response = self.client.post(reverse('hunger_invite'), {'email': 'cary@example.com'})
+        self.assertEqual(response.status_code, 302)
+        self.client.logout()
+
+        # Replace with examining email body
+        invitation = Invitation.objects.get(email='cary@example.com')
+        self.client.get(reverse('hunger_verify', args=[invitation.code.code]))
+
+        User.objects.create_user('dany', 'dany@example.com', 'secret')
+        self.client.login(username='dany', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_invite_non_user_with_email(self):
+        self.create_invite(email='dany@example.com')
+        User.objects.create_user('dany', 'dany@example.com', 'secret')
+        self.client.login(username='dany', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_invite_existing_user_with_email(self):
+        self.create_invite(email='alice@example.com')
+        self.client.login(username='alice', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_invite_non_user_without_email(self):
+        code = self.create_code(email='dany1@example.com')
+        self.client.get(reverse('hunger_verify', args=[code.code]))
+        User.objects.create_user('dany', 'dany@example.com', 'secret')
+        self.client.login(username='dany', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_invite_existing_user_without_email(self):
+        code = self.create_code(email='alice1@example.com')
+        self.client.get(reverse('hunger_verify', args=[code.code]))
+        self.client.login(username='alice', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        self.assertEqual(response.status_code, 200)

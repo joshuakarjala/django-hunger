@@ -23,7 +23,7 @@ Installation
   Django form for the email signup form. The ``confirmation.html`` and
   ``used.html`` templates are flatpages for confirming signup and used
   invites.
-- By default Hunger redirects to "/beta/" if a users is not logged in. So your "request_invite" templates should be located here. 
+- By default Hunger redirects to "/beta/" if a users is not logged in. So your "request_invite" templates should be located here.
 
 Settings
 --------
@@ -32,18 +32,12 @@ Settings
     String length of the invitation_code (Default: ``8``)
 ``BETA_ENABLE_BETA``
     Enable hunger middleware (Default: ``True``)
-``BETA_NEVER_ALLOW_VIEWS``
-    Never allow access to these views (Default: ``[]``)
 ``BETA_ALWAYS_ALLOW_VIEWS``
     Always let unregistered user see these view (Default: ``[]``)
 ``BETA_ALWAYS_ALLOW_MODULES``
     Convenience settings - allow all views and a given module (Default: ``[]``)
 ``BETA_ALLOW_FLATPAGES``
     If using flatpages app (Default: ``[]``)
-``BETA_SIGNUP_VIEWS``
-    Which views are used for signing up (Default: ``[]``)
-``BETA_SIGNUP_CONFIRMATION_VIEW``
-    The view which comes directly after a user has signed up (Default: ``''``)
 ``BETA_REDIRECT_URL``
     If user is not logged in and trying to access a hidden view - where should
     he/she be redirected (Default: ``/beta/``)

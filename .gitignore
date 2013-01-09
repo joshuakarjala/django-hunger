@@ -51,6 +51,8 @@ _build
 .build
 dist/*
 
+.tox/
+
 media/c/m.scss
 
 media/c/m.scss

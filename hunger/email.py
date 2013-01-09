@@ -1,4 +1,5 @@
 import os.path
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import get_template
@@ -16,9 +17,9 @@ def beta_confirm(email, **kwargs):
     Send out email confirming that they requested an invite.
     """
 
-    templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
+    templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', setting("DEFAULT_FROM_EMAIL"))
+    from_email = kwargs.get('from_email', getattr(settings, 'DEFAULT_FROM_EMAIL'))
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -58,9 +59,9 @@ def beta_invite(email, code, request, **kwargs):
     )
     context = Context(context_dict)
 
-    templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
+    templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', setting("DEFAULT_FROM_EMAIL"))
+    from_email = kwargs.get('from_email', getattr(settings, 'DEFAULT_FROM_EMAIL'))
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:

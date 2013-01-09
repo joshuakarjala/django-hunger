@@ -1,6 +1,7 @@
 from django import forms
 from hunger.models import Invitation
 
-class InviteRequestForm(forms.ModelForm):
+class InviteSendForm(forms.ModelForm):
     class Meta:
         model = Invitation
+        fields = ('email',)

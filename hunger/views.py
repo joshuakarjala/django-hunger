@@ -1,21 +1,31 @@
-from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from hunger.models import InvitationCode
-from hunger.forms import InviteRequestForm
+from hunger.forms import InviteSendForm
+from hunger.utils import setting, now
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView
 
 
-class InvitationCodeCreate(CreateView):
+class InviteView(FormView):
     """
-    Allow a user to request an invite at a later date by
-    entering their email address.
+    Allow a user to send invites.
     """
-    template_name='beta/request_invite.html'
-    form_class = InviteRequestForm
-    success_url = reverse_lazy('beta_confirmation')
+    template_name = 'beta/request_invite.html'
+    form_class = InviteSendForm
+    success_url = reverse_lazy('hunger_confirmation')
 
+    def form_valid(self, form):
+        valid_code = InvitationCode.objects.get(owner=self.request.user,
+                                                num_invites__gt=0)
+        form.instance.code = valid_code
+        form.instance.invited = now()
+        form.save()
+
+        return super(InviteView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(InviteView, self).form_valid(form)
 
 class ConfirmationView(TemplateView):
     """
@@ -32,17 +42,7 @@ class UsedView(TemplateView):
     template_name='beta/used.html'
 
 
-def verify_invite(request, invitation_code):
-    valid, exists = InvitationCode.validate_code(invitation_code)
-
-    if exists:
-        if not valid:
-            return redirect('beta_used')
-        else:
-            url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
-            response = redirect(url)
-            response.set_cookie('invitation_code', invitation_code)
-            return response
-    else:
-        url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
-        return redirect(url)
+def verify_invite(request, code):
+    response = redirect(setting('HUNGER_VERIFIED_REDIRECT'))
+    response.set_cookie('hunger_code', code)
+    return response
