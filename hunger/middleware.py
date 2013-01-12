@@ -23,12 +23,12 @@ class BetaMiddleware(object):
         on a development machine. Default is `True`.
 
     ``BETA_NEVER_ALLOW_VIEWS``
-        A list of full view names that should *never* be displayed.  This
+        A list of view names that should *never* be displayed.  This
         list is checked before the others so that this middleware exhibits
         deny then allow behavior.
 
     ``BETA_ALWAYS_ALLOW_VIEWS``
-        A list of full view names that should always pass through.
+        A list of view names that should always pass through.
 
     ``BETA_ALWAYS_ALLOW_MODULES``
         A list of modules that should always pass through.  All
@@ -71,6 +71,7 @@ class BetaMiddleware(object):
         short_name = view_func.__class__.__name__
         if short_name == 'function':
             short_name = view_func.__name__
+        view_name = self._get_view_name(request)
         full_view_name = '%s.%s' % (view_func.__module__, short_name)
 
         #Check modules
@@ -78,27 +79,30 @@ class BetaMiddleware(object):
             whitelisted_modules += self.always_allow_modules
 
         #if view in module then ignore - except if view is signup confirmation
-        if '%s' % view_func.__module__ in whitelisted_modules and not full_view_name == self.signup_confirmation_view:
+        if '%s' % view_func.__module__ in whitelisted_modules \
+                and not view_name == self.signup_confirmation_view \
+                and not full_view_name == self.signup_confirmation_view:
             return
 
         #Check views
-        if full_view_name in self.never_allow_views:
+        if view_name in self.never_allow_views or full_view_name in self.never_allow_views:
             return HttpResponseRedirect(self.redirect_url)
 
-        if full_view_name in self.always_allow_views:
+        if view_name in self.always_allow_views or full_view_name in self.always_allow_views:
             return
 
-        if full_view_name == self.signup_confirmation_view:
+        if view_name == self.signup_confirmation_view or full_view_name == self.signup_confirmation_view:
             #signup completed - deactivate invitation code
             request.session['beta_complete'] = True
             invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
             return
 
-        if request.user.is_authenticated() and full_view_name not in self.signup_views:
+        if request.user.is_authenticated() and full_view_name not in self.signup_views \
+                and view_name not in self.signup_views:
             # User is logged in, or beta is not active, no need to check anything else.
             return
 
-        if full_view_name in self.signup_views and in_beta:
+        if (view_name in self.signup_views or full_view_name in self.signup_views) and in_beta:
             #if beta code is valid and trying to register then let them through
             return
         else:
@@ -117,3 +121,15 @@ class BetaMiddleware(object):
         except AttributeError:
             pass
         return response
+
+    @staticmethod
+    def _get_view_name(request):
+        """ given a request, return the view name as set in urlpatterns.
+        """
+        if hasattr(request, 'resolver_match'):
+            # Django >= 1.5
+            return request.resolver_match.view_name
+
+        from django.core.urlresolvers import resolve
+        match = resolve(request.path)
+        return match.url_name
