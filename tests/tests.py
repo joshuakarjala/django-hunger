@@ -1,8 +1,6 @@
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.test import TestCase
-
 from hunger import forms
 from hunger.utils import setting, now
 from hunger.models import Invitation, InvitationCode
@@ -46,15 +44,6 @@ class BetaViewTests(TestCase):
         invitation.save()
         code = InvitationCode(owner=self.charlie)
         code.save()
-
-
-    def notest_request_invite(self):
-        """ Requesting an invite should generate a form and correct template."""
-        response = self.client.get('hunger_invite')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'beta/request_invite.html')
-        self.failUnless(isinstance(response.context['form'],
-                                   forms.InviteSendForm))
 
     def test_always_allow_view(self):
         response = self.client.get(reverse('always_allow'))

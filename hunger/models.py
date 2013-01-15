@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from hunger.utils import setting
 from hunger.signals import invite_created, invite_sent
 
+
 class Invitation(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     email = models.EmailField(_('Email'), blank=True, null=True)

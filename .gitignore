@@ -56,3 +56,5 @@ dist/*
 media/c/m.scss
 
 media/c/m.scss
+
+*.sqlite

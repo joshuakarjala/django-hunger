@@ -1,0 +1,3 @@
+Click here to activate your account on Django Hunger Example: {{ site.domain }}/accounts/activate/{{ activation_key }}/
+
+This link will expire in {{ expiration_days }} days.

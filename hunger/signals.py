@@ -32,9 +32,9 @@ def invitation_code_sent(sender, invitation, **kwargs):
         code = invitation.code
 
 
-    email_module_name = setting('BETA_EMAIL_MODULE', 'hunger.email')
+    email_module_name = setting('HUNGER_EMAIL_MODULE', 'hunger.email')
     email_module = importlib.import_module(email_module_name)
-    email_function_name = setting('BETA_EMAIL_INVITE_FUNCTION', 'beta_invite')
+    email_function_name = setting('HUNGER_EMAIL_INVITE_FUNCTION', 'beta_invite')
     email_function = getattr(email_module, email_function_name)
     email_function(email, code, **kwargs)
 

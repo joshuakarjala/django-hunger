@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load url from future %}
+
+{% block content %}
+<div>
+  <h1>Registration</h1>
+</div>
+
+<div class="row-fluid">
+  <form method="post" action="{% url 'registration_register' %}">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" class="btn" value="register" />
+    <input type="hidden" name="next" value="{{ next }}" />
+  </form>
+</div>
+{% endblock %}

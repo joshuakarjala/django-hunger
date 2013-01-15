@@ -1,0 +1,1 @@
+Activation Link for Django Hunger Example
