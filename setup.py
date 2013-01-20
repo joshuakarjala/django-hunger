@@ -33,7 +33,7 @@ tests_require = [
 setup(
     name='django-hunger',
     version=version_str,
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'example']),
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
     url='https://github.com/joshuakarjala/django-hunger/',
@@ -47,4 +47,4 @@ setup(
     extras_require={'test': tests_require},
     test_suite='runtests.runtests',
     include_package_data=True,
-    )
+)

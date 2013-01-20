@@ -11,7 +11,7 @@ class InviteView(FormView):
     """
     Allow a user to send invites.
     """
-    template_name = 'beta/request_invite.html'
+    template_name = 'hunger/request_invite.html'
     form_class = InviteSendForm
     success_url = reverse_lazy('hunger_confirmation')
 
