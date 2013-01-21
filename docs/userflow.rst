@@ -14,6 +14,7 @@ Cases
      views in modules listed in ``HUNGER_ALWAYS_ALLOW_MODULES``. The
      views list may refer to the view by the view's function name or
      urlpattern name.
+
    * All other urls redirect to ``HUNGER_REDIRECT``.
    * If registration view is listed above, then the user can register
      for an account that doesn't yet have beta access.

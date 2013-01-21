@@ -119,7 +119,6 @@ HUNGER_ALWAYS_ALLOW_VIEWS = (
     'registration_disallowed',
     'registration_register',
     'home',
-    'nonbeta',
 )
 
 

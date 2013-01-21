@@ -1,18 +1,17 @@
 import datetime
 from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
 
 
 DEFAULT_SETTINGS = {
     'HUNGER_ENABLE': True,
     'HUNGER_ALWAYS_ALLOW_VIEWS': [],
     'HUNGER_ALWAYS_ALLOW_MODULES': [],
-    'HUNGER_REDIRECT': '/nonbeta/',
-    'HUNGER_VERIFIED_REDIRECT': '/beta/',
+    'HUNGER_REDIRECT': reverse_lazy('hunger-not-in-beta'),
+    'HUNGER_VERIFIED_REDIRECT': reverse_lazy('hunger-verified'),
     'HUNGER_ALLOW_FLATPAGES': [],
     'HUNGER_EMAIL_TEMPLATES_DIR': 'hunger',
-    'HUNGER_EMAIL_MODULE': 'hunger.email',
-    'HUNGER_EMAIL_CONFIRM_FUNCTION': 'beta_confirm',
-    'HUNGER_EMAIL_INVITE_FUNCTION': 'beta_invite',
+    'HUNGER_EMAIL_INVITE_FUNCTION': 'hunger.email.beta_invite',
 }
 
 

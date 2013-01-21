@@ -9,6 +9,6 @@ urlpatterns = patterns('',
     url(r'', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^$', 'example.views.home', name='home'),
+    url(r'^hunger/', include('hunger.urls')),
     url(r'^accounts/profile/$', 'example.views.profile', name='profile'),
-    url(r'^nonbeta/$', 'example.views.nonbeta', name='nonbeta'),
 )

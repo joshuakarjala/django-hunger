@@ -126,7 +126,7 @@ class BetaMiddleware(object):
             if not invitations:
                 invitation = Invitation(user=request.user)
                 invitation.save()
-                return redirect(self.redirect)
+            return redirect(self.redirect)
 
         # No invitation, all we have is this cookie code
         try:
@@ -134,7 +134,7 @@ class BetaMiddleware(object):
                 num_invites__gt=0)
         except InvitationCode.DoesNotExist:
             request._hunger_delete_cookie = True
-            return redirect(self.redirect)
+            return redirect(reverse('hunger-invalid', args=(cookie_code,)))
 
         right_now = now()
         if code.private:

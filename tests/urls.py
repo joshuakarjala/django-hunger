@@ -10,5 +10,5 @@ urlpatterns = patterns('',
     url(r'^always-allow-module/$', 'tests.always_allow_views.allowed',
         name='always_allow_module'),
     url(r'^not-allowed/$', 'tests.views.rejection', name='rejection'),
-    url(r'', include('hunger.urls')),
+    url(r'^hunger/', include('hunger.urls')),
 )

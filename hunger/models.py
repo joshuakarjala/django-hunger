@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from hunger.utils import setting
-from hunger.signals import invite_created, invite_sent
+from hunger.signals import invite_sent
 
 
 class Invitation(models.Model):
@@ -17,9 +17,6 @@ class Invitation(models.Model):
     def save(self, *args, **kwargs):
         send_email = kwargs.pop('send_email', False)
         request = kwargs.pop('request', None)
-        if send_email and not self.invited:
-            invite_created.send(sender=self.__class__, invitation=self,
-                                request=request, user=self.user)
         if send_email and self.invited and not self.used:
             invite_sent.send(sender=self.__class__, invitation=self,
                              request=request, user=self.user)

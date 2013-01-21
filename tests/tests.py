@@ -86,13 +86,13 @@ class BetaViewTests(TestCase):
 
     def test_user_invite(self):
         self.client.login(username='charlie', password='secret')
-        response = self.client.post(reverse('hunger_invite'), {'email': 'cary@example.com'})
+        response = self.client.post(reverse('hunger-invite'), {'email': 'cary@example.com'})
         self.assertEqual(response.status_code, 302)
         self.client.logout()
 
         # Replace with examining email body
         invitation = Invitation.objects.get(email='cary@example.com')
-        self.client.get(reverse('hunger_verify', args=[invitation.code.code]))
+        self.client.get(reverse('hunger-verify', args=[invitation.code.code]))
 
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
@@ -114,7 +114,7 @@ class BetaViewTests(TestCase):
 
     def test_invite_non_user_without_email(self):
         code = self.create_code(email='dany1@example.com')
-        self.client.get(reverse('hunger_verify', args=[code.code]))
+        self.client.get(reverse('hunger-verify', args=[code.code]))
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
         response = self.client.get(reverse('invited_only'))
@@ -122,7 +122,7 @@ class BetaViewTests(TestCase):
 
     def test_invite_existing_user_without_email(self):
         code = self.create_code(email='alice1@example.com')
-        self.client.get(reverse('hunger_verify', args=[code.code]))
+        self.client.get(reverse('hunger-verify', args=[code.code]))
         self.client.login(username='alice', password='secret')
         response = self.client.get(reverse('invited_only'))
         self.assertEqual(response.status_code, 200)

@@ -8,18 +8,6 @@
 
 <div class="row-fluid">
   <div class="span6">
-  </div>
-  <div class="span6">
-    <form method="post" action="{% url 'login' %}">
-      {% csrf_token %}
-      {{ form }}
-      <br>
-      <input type="submit" class="btn" value="login" />
-      <input type="hidden" name="next" value="{{ next }}" />
-      <a href="{% url 'registration_register' %}"> or register here</a>
-    </form>
-    <div>
-      <a href="{% url 'auth_password_reset' %}">Forgot your password?</a>
-    </div>
+    If you are seeing this, then you are part of the beta. Congratulations!
   </div>
 {% endblock %}

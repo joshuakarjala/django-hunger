@@ -13,7 +13,7 @@ class InviteView(FormView):
     """
     template_name = 'hunger/request_invite.html'
     form_class = InviteSendForm
-    success_url = reverse_lazy('hunger_confirmation')
+    success_url = reverse_lazy('hunger-verified')
 
     def form_valid(self, form):
         valid_code = InvitationCode.objects.get(owner=self.request.user,
@@ -27,19 +27,28 @@ class InviteView(FormView):
     def form_invalid(self, form):
         return super(InviteView, self).form_valid(form)
 
-class ConfirmationView(TemplateView):
+class NotBetaView(TemplateView):
     """
     Display a message to the user after the invite request is completed
     successfully.
     """
-    template_name='beta/confirmation.html'
+    template_name='hunger/not_in_beta.html'
 
 
-class UsedView(TemplateView):
+class VerifiedView(TemplateView):
     """
-    Display a message to the user that the invitation code has already been used.
+    Display a message to the user after the invite request is completed
+    successfully.
     """
-    template_name='beta/used.html'
+    template_name='hunger/verified.html'
+
+
+class InvalidView(TemplateView):
+    """
+    Display a message to the user that the invitation code is
+    invalid or has already been used.
+    """
+    template_name='hunger/invalid.html'
 
 
 def verify_invite(request, code):

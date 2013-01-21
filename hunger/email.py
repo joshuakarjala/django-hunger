@@ -12,40 +12,6 @@ try:
 except ImportError:
     templated_email_available = False
 
-def beta_confirm(email, **kwargs):
-    """
-    Send out email confirming that they requested an invite.
-    """
-
-    templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')
-    templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', getattr(settings, 'DEFAULT_FROM_EMAIL'))
-    if templates_folder == 'hunger':
-        file_extension = 'email'
-    else:
-        file_extension = None
-
-    context_dict = kwargs.copy()
-    if templated_email_available:
-        send_templated_mail(
-            template_name='beta_confirm',
-            from_email=from_email,
-            recipient_list=[email],
-            context=context_dict,
-            template_dir=templates_folder,
-            file_extension=file_extension,
-        )
-    else:
-        plaintext = get_template(os.path.join(templates_folder, 'beta_confirm.txt'))
-        html = get_template(os.path.join(templates_folder, 'beta_confirm.html'))
-        subject, to = 'You requested an invite!', email
-        text_content = plaintext.render(Context())
-        html_content = html.render(Context())
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                                     headers={'From': '%s' % from_email})
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-
 def beta_invite(email, code, request, **kwargs):
     """
     Email for sending out the invitation code to the user.
@@ -69,7 +35,7 @@ def beta_invite(email, code, request, **kwargs):
 
     if templated_email_available:
         send_templated_mail(
-            template_name='beta_invite',
+            template_name='invite_email',
             from_email=from_email,
             recipient_list=[email],
             context=context_dict,
@@ -77,10 +43,12 @@ def beta_invite(email, code, request, **kwargs):
             file_extension=file_extension,
         )
     else:
-        plaintext = get_template(os.path.join(templates_folder, 'beta_invite.txt'))
-        html = get_template(os.path.join(templates_folder, 'beta_invite.html'))
+        plaintext = get_template(os.path.join(templates_folder, 'invite_email.txt'))
+        html = get_template(os.path.join(templates_folder, 'invite_email.html'))
 
-        subject, to = "Here is your invite", email
+        subject = get_template(os.path.join(templates_folder,
+            'invite_email_subject.txt')).render(context)
+        to = email
         text_content = plaintext.render(context)
         html_content = html.render(context)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],

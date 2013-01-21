@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from setuptools import setup, find_packages
 import hunger
 
@@ -7,8 +8,6 @@ try:
     LONG_DESCRIPTION = open('README.rst').read()
 except:
     pass
-
-version_str = '%d.%d.%d' % (hunger.VERSION[0], hunger.VERSION[1], hunger.VERSION[2])
 
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
@@ -32,7 +31,7 @@ tests_require = [
 
 setup(
     name='django-hunger',
-    version=version_str,
+    version=hunger.VERSION,
     packages=find_packages(exclude=['tests', 'example']),
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
