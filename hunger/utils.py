@@ -1,9 +1,11 @@
 import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.models import User
 
 
 DEFAULT_SETTINGS = {
+    'AUTH_USER_MODEL': User,
     'HUNGER_ENABLE': True,
     'HUNGER_ALWAYS_ALLOW_VIEWS': [],
     'HUNGER_ALWAYS_ALLOW_MODULES': [],
