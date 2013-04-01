@@ -1,5 +1,5 @@
-from django.views.generic.simple import direct_to_template
+from django.shortcuts import render
 
 
 def allowed(request):
-    return direct_to_template(request, template='default.html')
+    return render(request, 'default.html')

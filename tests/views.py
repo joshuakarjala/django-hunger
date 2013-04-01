@@ -1,9 +1,13 @@
-from django.views.generic.simple import direct_to_template
+from django.shortcuts import render
 
 
 def always_allow(request):
-    return direct_to_template(request, template='default.html')
+    return render(request, 'default.html')
 
 
 def rejection(request):
-    return direct_to_template(request, template='default.html')
+    return render(request, 'default.html')
+
+
+def invited_only(request):
+    return render(request, 'default.html')

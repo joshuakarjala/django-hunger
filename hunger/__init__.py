@@ -2,4 +2,4 @@
 Hunger is a Django app to manage a private beta phase.
 """
 # In the form of Major, Minor.
-VERSION = '2.0.1'
+VERSION = '2.0.2'
