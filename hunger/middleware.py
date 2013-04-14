@@ -124,7 +124,7 @@ class BetaMiddleware(object):
 
         if not cookie_code:
             if not invitations:
-                invitation = Invitation(user=request.user)
+                invitation = Invitation(user=request.user, email=getattr(request.user, 'email'))
                 invitation.save()
             return redirect(self.redirect)
 
