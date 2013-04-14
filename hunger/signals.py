@@ -13,6 +13,9 @@ def invitation_code_sent(sender, invitation, **kwargs):
     """
     if sender.__name__ == 'Invitation':
         email = invitation.user.email
+        if not invitation.code:
+            from hunger.models import InvitationCode
+            invitation.code = InvitationCode.objects.create(owner = invitation.user)
         code = invitation.code.code
     elif sender.__name__ == 'InvitationCode':
         email = kwargs.pop('email', None)
