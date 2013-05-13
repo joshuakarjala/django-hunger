@@ -20,7 +20,8 @@ class InviteView(FormView):
                                                 num_invites__gt=0)
         form.instance.code = valid_code
         form.instance.invited = now()
-        form.save()
+        instance = form.save(commit=False)
+        instance.save(send_email=True)
 
         return super(InviteView, self).form_valid(form)
 
