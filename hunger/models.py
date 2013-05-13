@@ -28,7 +28,7 @@ class Invitation(models.Model):
 
 
 class InvitationCode(models.Model):
-    code = models.CharField(_('Invitation code'), max_length=30, unique=True)
+    code = models.CharField(_('Invitation code'), max_length=30, unique=True, blank=True)
     private = models.BooleanField(default=True)
     max_invites = models.PositiveIntegerField(
         _('Max number of invitations'), default=1)
