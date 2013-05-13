@@ -31,10 +31,11 @@ def beta_invite(email, code, request, **kwargs):
     context_dict.setdefault("site", site)
     context_dict.setdefault("code", code)
 
-    context_dict.setdefault(
-        "invite_url",
-        request.build_absolute_uri(reverse("hunger-verify", args=[code]))
-    )
+    if request:
+        context_dict.setdefault(
+            "invite_url",
+            request.build_absolute_uri(reverse("hunger-verify", args=[code]))
+        )
     context = Context(context_dict)
 
     templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')
