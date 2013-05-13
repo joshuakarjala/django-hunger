@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from django.template import Context
 from hunger.utils import setting
+from django.contrib.sites.models import Site
+from django.contrib.sites.models import RequestSite
 
 try:
     from templated_email import send_templated_mail
@@ -18,7 +20,17 @@ def beta_invite(email, code, request, **kwargs):
     Invitation URL is added to the context, so it can be rendered with standard
     django template engine.
     """
+
+    if Site._meta.installed:
+        site = Site.objects.get_current()
+    else:
+        site = RequestSite(request)
+
     context_dict = kwargs.copy()
+
+    context_dict.setdefault("site", site)
+    context_dict.setdefault("code", code)
+
     context_dict.setdefault(
         "invite_url",
         request.build_absolute_uri(reverse("beta_verify_invite", args=[code]))
