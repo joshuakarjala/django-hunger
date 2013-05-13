@@ -12,7 +12,7 @@ def invitation_code_sent(sender, invitation, **kwargs):
     Invitation could be InvitationCode or Invitation.
     """
     if sender.__name__ == 'Invitation':
-        email = invitation.user.email
+        email = invitation.email
         code = invitation.code.code
     elif sender.__name__ == 'InvitationCode':
         email = kwargs.pop('email', None)
