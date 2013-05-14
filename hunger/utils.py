@@ -11,6 +11,7 @@ DEFAULT_SETTINGS = {
     'HUNGER_ALWAYS_ALLOW_MODULES': [],
     'HUNGER_REDIRECT': reverse_lazy('hunger-not-in-beta'),
     'HUNGER_VERIFIED_REDIRECT': reverse_lazy('hunger-verified'),
+    'HUNGER_INVITE_SENT_REDIRECT': reverse_lazy('hunger-invite-sent'),
     'HUNGER_ALLOW_FLATPAGES': [],
     'HUNGER_EMAIL_TEMPLATES_DIR': 'hunger',
     'HUNGER_EMAIL_INVITE_FUNCTION': 'hunger.email.beta_invite',

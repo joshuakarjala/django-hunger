@@ -32,6 +32,10 @@ Installation and Basic Configuration
 - Create template ``hunger/invalid.html``, which is the page a user
   sees when they try to use a code but it is invalid. It could be a
   code that doesn't exist or one that has run out of invites.
+- [Optional] Create template ``hunger/invite_sent.html``, which is the
+  page a user sees after sending invites to other people. You don't
+  need this if you only want to allow admins and staff to send
+  invites.
 - Create the email template ``hunger/invite_email.[html/txt]`` and
   email subject template ``hunger/invite_email_subject.txt``. These
   templates are rendered like Django templates with a simple context
@@ -54,6 +58,8 @@ valid targets for the built-in ``django.shortcuts.redirect`` function.
   in the beta.
 - ``HUNGER_VERIFIED_REDIRECT`` for the page a user sees after
   successfully joining and verifying in-beta status.
+- ``HUNGER_INVITE_SENT_REDIRECT`` for the page a user sees after
+  sending invites to others.
 - ``HUNGER_EMAIL_TEMPLATES_DIR`` for a different directory holding the
   invite email templates.
 - ``HUNGER_EMAIL_INVITE_FUNCTION`` for a different function to call
