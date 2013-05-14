@@ -20,8 +20,8 @@ def beta_invite(email, code, request, **kwargs):
     """
     context_dict = kwargs.copy()
     context_dict.setdefault(
-        "invite_url",
-        request.build_absolute_uri(reverse("beta_verify_invite", args=[code]))
+        'invite_url',
+        request.build_absolute_uri(reverse('beta_verify_invite', args=[code]))
     )
     context = Context(context_dict)
 
@@ -47,7 +47,7 @@ def beta_invite(email, code, request, **kwargs):
         html = get_template(os.path.join(templates_folder, 'invite_email.html'))
 
         subject = get_template(os.path.join(templates_folder,
-            'invite_email_subject.txt')).render(context).strip("\n")
+            'invite_email_subject.txt')).render(context).strip()
         to = email
         text_content = plaintext.render(context)
         html_content = html.render(context)
