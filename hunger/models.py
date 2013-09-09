@@ -46,6 +46,7 @@ class InvitationCode(models.Model):
         """The number of invites remaining for this code."""
         return max([0, self.max_invites - self.invited_users.count()])
 
+    @classmethod
     def generate_invite_code(self):
         return ''.join(random.choice(string.letters) for i in range(16))
 
