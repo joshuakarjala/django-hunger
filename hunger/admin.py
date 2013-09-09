@@ -1,9 +1,12 @@
 import csv
 from datetime import datetime
+
 from django.contrib import admin
 from django.http import HttpResponse
+
 from hunger.models import InvitationCode, Invitation
 from hunger.utils import now
+from hunger.forms import InvitationCodeAdminForm
 
 
 def export_email(modeladmin, request, queryset):
@@ -57,6 +60,7 @@ class InvitationAdmin(admin.ModelAdmin):
 
 class InvitationCodeAdmin(admin.ModelAdmin):
     """Admin for invitation code"""
+    form = InvitationCodeAdminForm
     list_display = ('code', 'num_invites', 'owner', )
     filter_horizontal = ('invited_users', )
     search_fields = ['created_by__email', 'owner__username']
