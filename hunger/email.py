@@ -21,7 +21,7 @@ def beta_invite(email, code, request, **kwargs):
     context_dict = kwargs.copy()
     context_dict.setdefault(
         'invite_url',
-        request.build_absolute_uri(reverse('beta_verify_invite', args=[code]))
+        request.build_absolute_uri(reverse('hunger-verify', args=[code]))
     )
     context = Context(context_dict)
 
