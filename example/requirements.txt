@@ -1,2 +1,2 @@
 Django==1.4.3
-django-hunger==2.0.0a
+django-hunger==2.0.3
