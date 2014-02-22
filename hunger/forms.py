@@ -7,6 +7,11 @@ class InviteSendForm(forms.ModelForm):
         model = Invitation
         fields = ('email',)
 
+    def __init__(self, *args, **kwargs):
+        super(InviteSendForm, self).__init__(*args, **kwargs)
+
+        # When sending an invitation, the email address is required
+        self.fields['email'].required = True
 
 class InvitationCodeAdminForm(forms.ModelForm):
     code = forms.CharField(initial=lambda: InvitationCode.generate_invite_code())

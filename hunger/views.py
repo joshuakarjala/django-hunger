@@ -24,10 +24,6 @@ class InviteView(FormView):
 
         return super(InviteView, self).form_valid(form)
 
-    def form_invalid(self, form):
-        return super(InviteView, self).form_valid(form)
-
-
 class NotBetaView(TemplateView):
     """
     Display a message to the user after the invite request is completed
