@@ -133,7 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'registration',
     'hunger',
-    'example',
+    'example'
 )
 
 # A sample logging configuration. The only tangible logging
