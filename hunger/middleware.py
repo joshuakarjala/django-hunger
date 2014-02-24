@@ -57,7 +57,7 @@ class BetaMiddleware(object):
                                'django.views.static',
                                'django.contrib.staticfiles.views']
 
-        # All hunger vies, except NotBetaView, are off limits until in beta
+        # All hunger views, except NotBetaView, are off limits until in beta
         whitelisted_views = ['hunger.views.NotBetaView']
 
         short_name = view_func.__class__.__name__
@@ -76,11 +76,8 @@ class BetaMiddleware(object):
         if self.always_allow_views:
             whitelisted_views += self.always_allow_views
 
-        if '%s' % full_view_name in whitelisted_views:
-            return
-
-        if (full_view_name in self.always_allow_views or
-            view_name in self.always_allow_views):
+        if (full_view_name in whitelisted_views or
+            view_name in whitelisted_views):
             return
 
         if not request.user.is_authenticated():
