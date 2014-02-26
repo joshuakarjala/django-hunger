@@ -84,7 +84,8 @@ class BetaViewTests(TestCase):
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
         response = self.client.get(reverse('invited_only'))
-        self.assertEqual(response.status_code, 200)
+        # Dany should be denied, since he has no connection with email account
+        self.assertEqual(response.status_code, 302)
 
     def test_invite_non_user_with_email(self):
         self.create_invite(email='dany@example.com')
@@ -105,11 +106,13 @@ class BetaViewTests(TestCase):
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
         response = self.client.get(reverse('invited_only'))
-        self.assertEqual(response.status_code, 200)
+        # Dany should be denied, since he has no connection with email account
+        self.assertEqual(response.status_code, 302)
 
     def test_invite_existing_user_without_email(self):
         code = self.create_code(email='alice1@example.com')
         self.client.get(reverse('hunger-verify', args=[code.code]))
         self.client.login(username='alice', password='secret')
         response = self.client.get(reverse('invited_only'))
-        self.assertEqual(response.status_code, 200)
+        # Alice should be denied, since she has no connection with email account
+        self.assertEqual(response.status_code, 302)

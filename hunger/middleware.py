@@ -55,8 +55,10 @@ class BetaMiddleware(object):
         whitelisted_modules = ['django.contrib.auth.views',
                                'django.contrib.admin.sites',
                                'django.views.static',
-                               'django.contrib.staticfiles.views',
-                               'hunger.views']
+                               'django.contrib.staticfiles.views']
+
+        # All hunger views, except NotBetaView, are off limits until in beta
+        whitelisted_views = ['hunger.views.NotBetaView']
 
         short_name = view_func.__class__.__name__
         if short_name == 'function':
@@ -71,8 +73,11 @@ class BetaMiddleware(object):
         if '%s' % view_func.__module__ in whitelisted_modules:
             return
 
-        if (full_view_name in self.always_allow_views or
-            view_name in self.always_allow_views):
+        if self.always_allow_views:
+            whitelisted_views += self.always_allow_views
+
+        if (full_view_name in whitelisted_views or
+            view_name in whitelisted_views):
             return
 
         if not request.user.is_authenticated():
