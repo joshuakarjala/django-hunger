@@ -58,7 +58,9 @@ class BetaMiddleware(object):
                                'django.contrib.staticfiles.views']
 
         # All hunger views, except NotBetaView, are off limits until in beta
-        whitelisted_views = ['hunger.views.NotBetaView']
+        whitelisted_views = ['hunger.views.NotBetaView',
+                             'hunger.views.verify_invite',
+                             'hunger.views.InvalidView']
 
         short_name = view_func.__class__.__name__
         if short_name == 'function':
