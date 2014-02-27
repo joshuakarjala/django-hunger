@@ -58,3 +58,6 @@ media/c/m.scss
 media/c/m.scss
 
 *.sqlite
+
+vagrant_bootstrap.sh
+Vagrantfile
