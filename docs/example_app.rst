@@ -9,10 +9,20 @@ Clone the repo and run the included example django project::
    python manage.py syncdb
    python manage.py runserver
 
+Alternately, if you want to leave your local environment untouched, you can also instantiate a Vagrant instance and run the Django server using::
+
+   vagrant provision
+   vagrant up
+   vagrant ssh
+   cd /vagrant/example
+   source env/bin/activate
+   python manage.py syncdb
+   python manage.py runserver
+
 Guide
 -----
 
-The example app utlizes a basic configuration with
+The example app utilizes a basic configuration with
 `django-registration
 <https://bitbucket.org/ubernostrum/django-registration>`_ for
 verifying emails. Therefore the list of views in
