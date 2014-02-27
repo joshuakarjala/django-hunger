@@ -116,3 +116,9 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('invited_only'))
         # Alice should be denied, since she has no connection with email account
         self.assertEqual(response.status_code, 302)
+
+    def test_invalid_code(self):
+        invalid_code = 'XXXXinvalidcodeXXXX'
+        self.client.login(username='alice', password='secret')
+        response = self.client.get(reverse('hunger-verify', args=[invalid_code]), follow=True)
+        self.assertRedirects(response, reverse('hunger-invalid', args=[invalid_code]))
