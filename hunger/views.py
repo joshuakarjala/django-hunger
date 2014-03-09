@@ -58,9 +58,7 @@ class InviteSentView(TemplateView):
 
 @login_required
 def verify_invite(request, code):
-    """
-    Verify new invitee by storing invite code in cookie for middleware to validate.
-    """
+    """Verify new invitee by storing invite code for middleware to validate."""
     response = redirect(setting('HUNGER_VERIFIED_REDIRECT'))
     response.set_cookie('hunger_code', code)
     return response
