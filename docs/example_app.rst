@@ -12,7 +12,7 @@ Clone the repo and run the included example django project::
 Guide
 -----
 
-The example app utlizes a basic configuration with
+The example app utilizes a basic configuration with
 `django-registration
 <https://bitbucket.org/ubernostrum/django-registration>`_ for
 verifying emails. Therefore the list of views in
