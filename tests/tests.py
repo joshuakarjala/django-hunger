@@ -54,8 +54,9 @@ class BetaViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_garden_when_not_invited(self):
+        """Confirm that an unauthenticated user is redirected to login"""
         response = self.client.get(reverse('invited_only'))
-        self.assertRedirects(response, reverse(self.redirect))
+        self.assertRedirects(response, setting('LOGIN_URL'))
 
     def test_using_invite(self):
         cary = User.objects.create_user('cary', 'cary@example.com', 'secret')

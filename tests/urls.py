@@ -8,4 +8,5 @@ urlpatterns = patterns('',
         name='always_allow_module'),
     url(r'^not-allowed/$', 'tests.views.rejection', name='rejection'),
     url(r'^hunger/', include('hunger.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls'))
 )

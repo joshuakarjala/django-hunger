@@ -83,7 +83,8 @@ class BetaMiddleware(object):
             return
 
         if not request.user.is_authenticated():
-            return redirect(self.redirect)
+            # Ask anonymous user to log in if trying to access in-beta view
+            return redirect(setting('LOGIN_URL'))
 
         if request.user.is_staff:
             return
