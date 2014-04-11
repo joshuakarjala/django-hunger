@@ -12,17 +12,20 @@ try:
 except ImportError:
     templated_email_available = False
 
-def beta_invite(email, code, request, **kwargs):
+def beta_invite(email, request, code=None, **kwargs):
     """
     Email for sending out the invitation code to the user.
     Invitation URL is added to the context, so it can be rendered with standard
     django template engine.
     """
     context_dict = kwargs.copy()
-    context_dict.setdefault(
-        'invite_url',
-        request.build_absolute_uri(reverse('hunger-verify', args=[code]))
-    )
+    if code:
+        invite_url = request.build_absolute_uri(
+            reverse('hunger-verify', args=[code]))
+    else:
+        invite_url = setting('HUNGER_VERIFIED_REDIRECT')
+    context_dict.setdefault('invite_url', invite_url)
+
     context = Context(context_dict)
 
     templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')

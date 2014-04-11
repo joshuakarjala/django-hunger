@@ -1,8 +1,10 @@
-import string, random
+import importlib
+import random
+import string
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from hunger.utils import setting
-from hunger.signals import invite_sent
 
 User = setting('AUTH_USER_MODEL')
 
@@ -19,12 +21,26 @@ class Invitation(models.Model):
         send_email = kwargs.pop('send_email', False)
         request = kwargs.pop('request', None)
         if send_email and self.invited and not self.used:
-            invite_sent.send(sender=self.__class__, invitation=self,
-                             request=request, user=self.user)
+            send_invitation(self, request=request, user=self.user)
+
         super(Invitation, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (('user', 'code'),)
+
+
+def send_invitation(invitation, **kwargs):
+    """Send invitation code to user.
+
+    Invitation could be InvitationCode or Invitation.
+    """
+    email = invitation.user.email
+    code = invitation.code.code if invitation.code else None
+    bits = setting('HUNGER_EMAIL_INVITE_FUNCTION').rsplit('.', 1)
+    module_name, func_name = bits
+    module = importlib.import_module(module_name)
+    func = getattr(module, func_name)
+    func(email, code=code, **kwargs)
 
 
 class InvitationCode(models.Model):
