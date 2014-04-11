@@ -6,7 +6,13 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from hunger.utils import setting
 
-User = setting('AUTH_USER_MODEL')
+try:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except RuntimeError:
+    User = settings.AUTH_USER_MODEL
+except ImportError:
+    from django.contrib.auth.models import User
 
 
 class Invitation(models.Model):
