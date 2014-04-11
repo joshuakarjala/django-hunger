@@ -1,12 +1,12 @@
 import csv
 from datetime import datetime
-
 from django.contrib import admin
 from django.http import HttpResponse
-
 from hunger.models import InvitationCode, Invitation
 from hunger.utils import now
 from hunger.forms import InvitationCodeAdminForm
+
+CSV_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def export_email(modeladmin, request, queryset):
@@ -21,13 +21,13 @@ def export_email(modeladmin, request, queryset):
         email = obj.user.email
         used = obj.used
         invited = obj.invited
-        created = datetime.strftime(code.created, "%Y-%m-%d %H:%M:%S")
+        created = datetime.strftime(code.created, CSV_DATE_FORMAT)
         try:
-            invited = datetime.strftime(obj.invited, "%Y-%m-%d %H:%M:%S")
+            invited = datetime.strftime(obj.invited, CSV_DATE_FORMAT)
         except TypeError:
             invited = ''
         try:
-            used = datetime.strftime(obj.used, "%Y-%m-%d %H:%M:%S")
+            used = datetime.strftime(obj.used, CSV_DATE_FORMAT)
         except TypeError:
             used = ''
 
