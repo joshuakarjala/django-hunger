@@ -1,4 +1,3 @@
-from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from hunger.models import InvitationCode
 from hunger.forms import InviteSendForm
