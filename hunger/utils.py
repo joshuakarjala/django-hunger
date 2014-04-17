@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy

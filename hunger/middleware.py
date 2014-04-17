@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from django.utils import six
 from django.conf import settings
 from django.core.urlresolvers import reverse, resolve
 from django.shortcuts import redirect
@@ -165,7 +167,11 @@ class BetaMiddleware(object):
 
     def process_response(self, request, response):
         if getattr(request, '_hunger_delete_cookie', False):
-            response.delete_cookie('hunger_code')
+            if six.PY2:
+                code = u'hunger_code'.encode('utf-8')
+            elif six.PY3:
+                code = 'hunger_code'
+            response.delete_cookie(code)
         return response
 
     @staticmethod

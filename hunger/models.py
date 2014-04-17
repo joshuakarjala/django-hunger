@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import importlib
 import random
 import string
@@ -70,7 +71,7 @@ class InvitationCode(models.Model):
 
     @classmethod
     def generate_invite_code(self):
-        return ''.join(random.choice(string.letters) for i in range(16))
+        return ''.join(random.choice(string.ascii_letters) for i in range(16))
 
     def save(self, *args, **kwargs):
         if not self.code:

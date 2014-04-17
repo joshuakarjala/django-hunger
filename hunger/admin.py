@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import csv
 from datetime import datetime
 from django.contrib import admin
