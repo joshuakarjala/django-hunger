@@ -1,7 +1,6 @@
 language: python
 python:
   - "2.7"
-  - "3.4"
 env:
   - DJANGO=1.5.5
   - DJANGO=1.6.2
@@ -10,7 +9,3 @@ install:
   - python setup.py -q install
 script:
   - python setup.py test
-matrix:
-  exclude:
-    - python: "3.4"
-      env: DJANGO=1.5.5
