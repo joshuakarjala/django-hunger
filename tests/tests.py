@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import TestCase
-from hunger import forms
 from hunger.utils import setting, now
 from hunger.models import Invitation, InvitationCode
 

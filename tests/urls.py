@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 from django.conf.urls import patterns, url, include
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^invited-only/$', 'tests.views.invited_only', name='invited_only'),
     url(r'^always-allow/$', 'tests.views.always_allow', name='always_allow'),
     url(r'^always-allow-module/$', 'tests.always_allow_views.allowed',

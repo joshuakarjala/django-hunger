@@ -24,6 +24,7 @@ class InviteView(FormView):
 
         return super(InviteView, self).form_valid(form)
 
+
 class NotBetaView(TemplateView):
     """
     Display a message to the user after the invite request is completed
@@ -50,7 +51,7 @@ class InvalidView(TemplateView):
 
 class InviteSentView(TemplateView):
     """
-    Display a message to the user after sending out invitations to other people.
+    Display a message to the user after sending out invitations to people.
     """
     template_name = 'hunger/invite_sent.html'
 

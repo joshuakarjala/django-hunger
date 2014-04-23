@@ -131,7 +131,6 @@ class BetaMiddleware(object):
             request.session['hunger_in_beta'] = True
             return
 
-
         if not cookie_code:
             if not invitations:
                 invitation = Invitation(user=request.user)
@@ -141,7 +140,7 @@ class BetaMiddleware(object):
         # No invitation, all we have is this cookie code
         try:
             code = InvitationCode.objects.get(code=cookie_code,
-                num_invites__gt=0)
+                                              num_invites__gt=0)
         except InvitationCode.DoesNotExist:
             request._hunger_delete_cookie = True
             return redirect(reverse('hunger-invalid', args=(cookie_code,)))

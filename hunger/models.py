@@ -57,10 +57,10 @@ class InvitationCode(models.Model):
         _('Max number of invitations'), default=1)
     num_invites = models.PositiveIntegerField(
         _('Remaining invitations'), default=1)
-    invited_users = models.ManyToManyField(User,
-        related_name='invitations', through='Invitation')
+    invited_users = models.ManyToManyField(
+        User, related_name='invitations', through='Invitation')
     owner = models.ForeignKey(User, related_name='created_invitations',
-        blank=True, null=True)
+                              blank=True, null=True)
 
     def __unicode__(self):
         return self.code

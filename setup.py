@@ -21,7 +21,7 @@ CLASSIFIERS = [
 
 INSTALL_REQUIRES = ['']
 try:
-    import importlib
+    import importlib  # noqa
 except ImportError:
     INSTALL_REQUIRES.append('importlib')
 

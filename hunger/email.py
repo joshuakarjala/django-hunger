@@ -13,6 +13,7 @@ try:
 except ImportError:
     templated_email_available = False
 
+
 def beta_invite(email, request, code=None, **kwargs):
     """
     Email for sending out the invitation code to the user.
@@ -31,7 +32,8 @@ def beta_invite(email, request, code=None, **kwargs):
 
     templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', getattr(settings, 'DEFAULT_FROM_EMAIL'))
+    from_email = kwargs.get('from_email',
+                            getattr(settings, 'DEFAULT_FROM_EMAIL'))
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -47,11 +49,14 @@ def beta_invite(email, request, code=None, **kwargs):
             file_extension=file_extension,
         )
     else:
-        plaintext = get_template(os.path.join(templates_folder, 'invite_email.txt'))
-        html = get_template(os.path.join(templates_folder, 'invite_email.html'))
+        plaintext = get_template(os.path.join(templates_folder,
+                                              'invite_email.txt'))
+        invite_path = os.path.join(templates_folder, 'invite_email.html')
+        html = get_template(invite_path)
 
-        subject = get_template(os.path.join(templates_folder,
-            'invite_email_subject.txt')).render(context).strip()
+        subject_path = os.path.join(templates_folder,
+                                    'invite_email_subject.txt')
+        subject = get_template(subject_path).render(context).strip()
         to = email
         text_content = plaintext.render(context)
         html_content = html.render(context)
