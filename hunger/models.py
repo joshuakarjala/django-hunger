@@ -41,7 +41,7 @@ def send_invitation(invitation, **kwargs):
 
     Invitation could be InvitationCode or Invitation.
     """
-    email = invitation.user.email
+    email = invitation.user.email if invitation.user else invitation.email
     code = invitation.code.code if invitation.code else None
     bits = setting('HUNGER_EMAIL_INVITE_FUNCTION').rsplit('.', 1)
     module_name, func_name = bits
