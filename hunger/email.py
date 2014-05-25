@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import get_template
-from django.template import Context
+from django.template import RequestContext
 from hunger.utils import setting
 
 try:
@@ -28,7 +28,7 @@ def beta_invite(email, request, code=None, **kwargs):
         invite_url = setting('HUNGER_VERIFIED_REDIRECT')
     context_dict.setdefault('invite_url', invite_url)
 
-    context = Context(context_dict)
+    context = RequestContext(request, context_dict)
 
     templates_folder = setting('HUNGER_EMAIL_TEMPLATES_DIR')
     templates_folder = os.path.join(templates_folder, '')
