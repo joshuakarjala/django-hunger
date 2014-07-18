@@ -1,39 +1,43 @@
-{% load url from future %}
 <!doctype html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.css" />
+  <link rel="dns-prefetch" href="//maxcdn.bootstrapcdn.com">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css">
+
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <title>Hunger Demo</title>
 </head>
 
 <body>
-  <div class="navbar navbar-static-top" data-dropdown="dropdown">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="brand link" href="/">Hunger Demo</a>
-        <ul class="nav pull-right">
-          {% if user.is_authenticated %}
-          <li class="nav">
-            <a href="{% url "profile" %}">{{ user.username }}</a>
-          </li>
-          <li class='dropdown'>
-            <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
-              <b class='caret'></b>
-            </a>
-            <ul class='dropdown-menu'>
-              <li><a href='{% url 'logout' %}?next=/'>Sign Out</a></li>
-            </ul>
-          </li>
-          {% else %}
-          <li class="nav">
-            <a href="{% url "auth_login" %}">Sign In</a>
-          </li>
-          {% endif %}
-        </ul>
+  <div class="navbar navbar-default navbar-static-top" data-dropdown="dropdown" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Hunger Demo</a>
       </div>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+        <li class="nav">
+          <a href="{% url "profile" %}">{{ user.username }}</a>
+        </li>
+        <li class='dropdown'>
+          <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+            <b class='caret'></b>
+          </a>
+          <ul class='dropdown-menu'>
+            <li><a href='{% url 'logout' %}?next=/'>Sign Out</a></li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav">
+          <a href="{% url "auth_login" %}">Sign In</a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
   <div class="container">
@@ -42,12 +46,12 @@
     Django Hunger Demo
   </h1>
   <div class="row">
-    <p class="span6">
+    <p class="col-md-6">
       Welcome to the Django Hunger demo app! This example project will demonstrate a basic configuration of django-registration with django-hunger.
     </p>
   </div>
   <div class="row">
-    <p class="span6">
+    <p class="col-md-6">
       <a href="{% url 'hunger-invite' %}">Invite someone to the beta</a>
     </p>
   </div>
