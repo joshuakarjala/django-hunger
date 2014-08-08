@@ -21,7 +21,10 @@ DEFAULT_SETTINGS = {
 
 def setting(name):
     """Return setting value for given name or default value."""
-    return getattr(settings, name, DEFAULT_SETTINGS[name])
+    setting = getattr(settings, name, None)
+    if setting is None and name in DEFAULT_SETTINGS:
+        setting = DEFAULT_SETTINGS[name]
+    return setting
 
 
 def now():
