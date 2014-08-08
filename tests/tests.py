@@ -54,7 +54,9 @@ class BetaViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_garden_when_not_invited(self):
-        """Confirm that an unauthenticated user is redirected to login"""
+        """
+        Confirm that an unauthenticated user is redirected to login.
+        """
         response = self.client.get(reverse('invited_only'))
         self.assertRedirects(response, setting('LOGIN_URL'))
 
@@ -73,22 +75,33 @@ class BetaViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_user_invite(self):
+        """
+        Confirm that one user can invite another to beta.
+        """
         self.client.login(username='charlie', password='secret')
         response = self.client.post(reverse('hunger-invite'), {'email': 'cary@example.com'})
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('hunger-invite-sent'))
         self.client.logout()
 
-        # Replace with examining email body
+        # @TODO: Replace with examining email body
+        User.objects.create_user('cary', 'cary@example.com', 'secret')
+        self.client.login(username='cary', password='secret')
         invitation = Invitation.objects.get(email='cary@example.com')
-        self.client.get(reverse('hunger-verify', args=[invitation.code.code]))
+        response = self.client.get(reverse('hunger-verify', args=[invitation.code.code]))
+        # Cary should be allowed to verify the code that belongs to her
+        self.assertRedirects(response, reverse('hunger-verified'))
+        self.client.logout()
 
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
         response = self.client.get(reverse('invited_only'))
-        # Dany should be denied, since he has no connection with email account
-        self.assertEqual(response.status_code, 302)
+        # Dany should be denied, since he has no connection with Cary
+        self.assertRedirects(response, reverse('rejection'))
 
     def test_invite_non_user_with_email(self):
+        """
+        Confirm that someone invited to beta can later register.
+        """
         self.create_invite(email='dany@example.com')
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
@@ -96,30 +109,74 @@ class BetaViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_invite_existing_user_with_email(self):
+        """
+        Confirm that existing user can later be invited to beta.
+        """
         self.create_invite(email='alice@example.com')
         self.client.login(username='alice', password='secret')
         response = self.client.get(reverse('invited_only'))
         self.assertEqual(response.status_code, 200)
 
     def test_invite_non_user_without_email(self):
+        """
+        Confirm that an unregistered user cannot join beta using a private
+        InvitationCode meant for someone else.
+        """
         code = self.create_code(email='dany1@example.com')
-        self.client.get(reverse('hunger-verify', args=[code.code]))
+        response = self.client.get(reverse('hunger-verify',
+                                           args=[code.code]), follow=True)
+        # Anonymous user cannot verify a private InvitationCode
+        self.assertRedirects(response, setting('LOGIN_URL'))
+
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
         response = self.client.get(reverse('invited_only'))
         # Dany should be denied, since he has no connection with email account
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('hunger-invalid', args=[code]))
+
+    def test_invite_non_user_public_invitation(self):
+        """
+        Confirm that an unregistered user can join beta using a public
+        InvitationCode.
+        """
+        code = self.create_code(private=False)
+
+        # Anonymous user can verify a public InvitationCode, but cannot
+        # access pages behind beta until logged in.
+        response = self.client.get(reverse('hunger-verify',
+                                           args=[code.code]), follow=True)
+
+        response = self.client.get(reverse('invited_only'))
+        self.assertRedirects(response, setting('LOGIN_URL'))
+
+        User.objects.create_user('dany', 'dany@example.com', 'secret')
+        self.client.login(username='dany', password='secret')
+        response = self.client.get(reverse('invited_only'))
+        # Dany is allowed in beta since he used public code earlier in session
+        self.assertEqual(response.status_code, 200)
 
     def test_invite_existing_user_without_email(self):
-        code = self.create_code(email='alice1@example.com')
-        self.client.get(reverse('hunger-verify', args=[code.code]))
+        """
+        Confirm that a registered user cannot join beta using a private
+        InvitationCode meant for someone else.
+        """
+        code = self.create_code(email='not_alice@example.com')
+        response = self.client.get(reverse('hunger-verify',
+                                           args=[code.code]), follow=True)
+        # Anonymous user cannot verify a private InvitationCode
+        self.assertRedirects(response, setting('LOGIN_URL'))
+
         self.client.login(username='alice', password='secret')
         response = self.client.get(reverse('invited_only'))
         # Alice should be denied, since she has no connection with email account
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('hunger-invalid', args=[code]))
 
     def test_invalid_code(self):
+        """
+        Confirm that a registered user cannot join beta using a random code.
+        """
         invalid_code = 'XXXXinvalidcodeXXXX'
         self.client.login(username='alice', password='secret')
-        response = self.client.get(reverse('hunger-verify', args=[invalid_code]), follow=True)
+        response = self.client.get(reverse('hunger-verify',
+                                           args=[invalid_code]), follow=True)
         self.assertRedirects(response, reverse('hunger-invalid', args=[invalid_code]))
