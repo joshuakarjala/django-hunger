@@ -5,6 +5,7 @@ from django.test import TestCase
 from hunger.utils import setting, now
 from hunger.models import Invitation, InvitationCode
 
+from django.test.utils import override_settings
 
 class BetaViewTests(TestCase):
     urls = 'tests.urls'
@@ -180,3 +181,10 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('hunger-verify',
                                            args=[invalid_code]), follow=True)
         self.assertRedirects(response, reverse('hunger-invalid', args=[invalid_code]))
+
+    @override_settings(HUNGER_ENABLE=False)
+    def test_settings(self):
+        """
+        Confirm that settings override DEFAULT_SETTINGS
+        """
+        self.assertEqual(False, setting('HUNGER_ENABLE'))
