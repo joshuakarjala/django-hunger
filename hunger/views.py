@@ -4,7 +4,6 @@ from hunger.forms import InviteSendForm
 from hunger.utils import setting, now
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.contrib.auth.decorators import login_required
 
 
 class InviteView(FormView):
@@ -56,7 +55,6 @@ class InviteSentView(TemplateView):
     template_name = 'hunger/invite_sent.html'
 
 
-@login_required
 def verify_invite(request, code):
     """Verify new invitee by storing invite code for middleware to validate."""
     response = redirect(setting('HUNGER_VERIFIED_REDIRECT'))

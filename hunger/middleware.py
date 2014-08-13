@@ -147,13 +147,10 @@ class BetaMiddleware(object):
 
         right_now = now()
         if code.private:
-            # If we got here, we're trying to fix up a previous private
-            # invitation to the correct user/email.
-            invitation = Invitation.objects.filter(code=code)[0]
-            invitation.user = request.user
-            invitation.invited = right_now
-            invitation.used = right_now
-            code.num_invites = 0
+            # User is trying to use a valid private code, but has no
+            # authority to use it (neither via username nor email)
+            request._hunger_delete_cookie = True
+            return redirect(reverse('hunger-invalid', args=(cookie_code,)))
         else:
             invitation = Invitation(user=request.user,
                                     code=code,
