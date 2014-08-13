@@ -17,9 +17,10 @@ class InviteView(FormView):
     def form_valid(self, form):
         valid_code = InvitationCode.objects.get(owner=self.request.user,
                                                 num_invites__gt=0)
-        form.instance.code = valid_code
-        form.instance.invited = now()
-        form.save()
+        instance = form.save(commit=False)
+        instance.code = valid_code
+        instance.invited = now()
+        instance.save(send_email=True, request=self.request)
 
         return super(InviteView, self).form_valid(form)
 
