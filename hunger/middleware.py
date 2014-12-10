@@ -112,7 +112,7 @@ class BetaMiddleware(object):
         # Check for matching cookie code if available.
         if cookie_code:
             for invitation in activates:
-                if invitation.code.code == cookie_code:
+                if invitation.code and invitation.code.code == cookie_code:
                     # Invitation may be attached to email
                     invitation.user = request.user
                     invitation.used = now()
