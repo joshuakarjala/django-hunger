@@ -21,3 +21,4 @@ class InvitationCodeAdminForm(forms.ModelForm):
 
     class Meta:
         model = InvitationCode
+        exclude = ()
