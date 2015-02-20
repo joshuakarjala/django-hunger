@@ -134,7 +134,7 @@ class BetaViewTests(TestCase):
         self.client.login(username='dany', password='secret')
         response = self.client.get(reverse('invited_only'))
         # Dany should be denied, since he has no connection with email account
-        self.assertRedirects(response, reverse('hunger-invalid', args=[code]))
+        self.assertRedirects(response, reverse('hunger-invalid', args=[code.code]))
 
     def test_invite_non_user_public_invitation(self):
         """
@@ -171,7 +171,7 @@ class BetaViewTests(TestCase):
         self.client.login(username='alice', password='secret')
         response = self.client.get(reverse('invited_only'))
         # Alice should be denied, since she has no connection with email account
-        self.assertRedirects(response, reverse('hunger-invalid', args=[code]))
+        self.assertRedirects(response, reverse('hunger-invalid', args=[code.code]))
 
     def test_invalid_code(self):
         """

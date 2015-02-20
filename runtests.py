@@ -2,9 +2,7 @@
 from __future__ import unicode_literals
 import sys
 
-import django
 from django.conf import settings
-from django.test.utils import get_runner
 
 
 if not settings.configured:
@@ -48,7 +46,11 @@ if not settings.configured:
 
 
 def runtests():
-    django.setup()
+    from django import VERSION
+    if VERSION[1] >= 7:
+        from django import setup
+        setup()
+    from django.test.utils import get_runner
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
     failures = test_runner.run_tests(["tests"])
