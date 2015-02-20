@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
-import hunger
 
 DESCRIPTION = "A Django app to manage a private beta phase."
 
@@ -21,17 +20,17 @@ CLASSIFIERS = [
 
 INSTALL_REQUIRES = ['']
 try:
-    import importlib  # noqa
+    import importlib  # pylint: disable=unused-import
 except ImportError:
     INSTALL_REQUIRES.append('importlib')
 
-tests_require = [
+TESTS_REQUIRE = [
     'Django>=1.3',
 ]
 
 setup(
     name='django-hunger',
-    version=hunger.VERSION,
+    version='2.1.1',
     packages=find_packages(exclude=['tests', 'example']),
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
@@ -42,8 +41,8 @@ setup(
     platforms=['any'],
     classifiers=CLASSIFIERS,
     install_requires=INSTALL_REQUIRES,
-    tests_require=tests_require,
-    extras_require={'test': tests_require},
+    tests_require=TESTS_REQUIRE,
+    extras_require={'test': TESTS_REQUIRE},
     test_suite='runtests.runtests',
     include_package_data=True,
 )

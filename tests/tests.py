@@ -49,6 +49,7 @@ class BetaViewTests(TestCase):
     def test_always_allow_view(self):
         response = self.client.get(reverse('always_allow'))
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, 'default.html')
 
     def test_always_allow_module(self):
         response = self.client.get(reverse('always_allow_module'))

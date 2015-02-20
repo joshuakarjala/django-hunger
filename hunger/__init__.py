@@ -1,7 +1,8 @@
 """
 Hunger is a Django app to manage a private beta phase.
 """
-# In the form of Major, Minor.
-VERSION = '2.1.1'
+import pkg_resources
 
-__version__ = VERSION
+__version__ = pkg_resources.get_distribution('django_hunger').version
+
+VERSION = __version__

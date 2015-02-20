@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 from __future__ import unicode_literals
 import sys
-from os.path import dirname, abspath, join
-from optparse import OptionParser
 
-parent = dirname(abspath(__file__))
-sys.path.insert(0, parent)
-
+import django
 from django.conf import settings
+from django.test.utils import get_runner
+
 
 if not settings.configured:
     settings.configure(
@@ -26,15 +24,12 @@ if not settings.configured:
             'django.contrib.sessions',
             'django.contrib.sites',
             'django.contrib.contenttypes',
-            # 'south',
             'hunger',
             'tests',
         ],
         ROOT_URLCONF='',
         DEBUG=False,
         SITE_ID=1,
-        TEMPLATE_DEBUG=True,
-        TEMPLATE_DIRS=[join(parent, 'tests', 'templates')],
 
         MIDDLEWARE_CLASSES=(
             'django.middleware.common.CommonMiddleware',
@@ -51,30 +46,14 @@ if not settings.configured:
         HUNGER_ALWAYS_ALLOW_MODULES=['tests.always_allow_views'],
     )
 
-from django.test.simple import DjangoTestSuiteRunner
 
+def runtests():
+    django.setup()
+    TestRunner = get_runner(settings)
+    test_runner = TestRunner()
+    failures = test_runner.run_tests(["tests"])
+    sys.exit(bool(failures))
 
-def runtests(*test_args, **kwargs):
-    if 'south' in settings.INSTALLED_APPS:
-        from south.management.commands import patch_for_test_db_setup
-        patch_for_test_db_setup()
-
-    if not test_args:
-        test_args = ['tests']
-
-    test_runner = DjangoTestSuiteRunner(
-        verbosity=kwargs.get('verbosity', 1),
-        interactive=kwargs.get('interactive', False),
-        failfast=kwargs.get('failfast'))
-
-    failures = test_runner.run_tests(test_args)
-    sys.exit(failures)
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option('--failfast', action='store_true', default=False,
-                      dest='failfast')
-
-    (options, args) = parser.parse_args()
-
-    runtests(failfast=options.failfast, *args)
+    runtests()

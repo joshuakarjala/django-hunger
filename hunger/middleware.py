@@ -81,7 +81,7 @@ class BetaMiddleware(object):
             whitelisted_views += self.always_allow_views
 
         if (full_view_name in whitelisted_views or
-            view_name in whitelisted_views):
+                view_name in whitelisted_views):
             return
 
         if not request.user.is_authenticated():

@@ -3,14 +3,17 @@ python:
   - "2.7"
   - "3.4"
 env:
-  - DJANGO=1.5.5
-  - DJANGO=1.6.2
+  - DJANGO=1.5.12
+  - DJANGO=1.6.9
+  - DJANGO=1.7.2
 install:
-  - pip install -q Django==$DJANGO --use-mirrors
-  - python setup.py -q install
+  - pip install -q Django==$DJANGO
+  - pip install coveralls
 script:
-  - python setup.py test
+  - coverage run --source=hunger setup.py test
+after_success:
+  - coveralls
 matrix:
   exclude:
     - python: "3.4"
-      env: DJANGO=1.5.5
+      env: DJANGO=1.5.12

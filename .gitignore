@@ -52,9 +52,11 @@ _build
 dist/*
 
 .tox/
+.coverage
 
 media/c/m.scss
 
 media/c/m.scss
 
 *.sqlite
+@*
