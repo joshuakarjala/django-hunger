@@ -30,7 +30,7 @@ TESTS_REQUIRE = [
 
 setup(
     name='django-hunger',
-    version='2.1.2',
+    version='2.1.3.dev0',
     packages=find_packages(exclude=['tests', 'example']),
     author='Joshua Karjala-Svenden',
     author_email='joshua@fluxuries.com',
