@@ -163,10 +163,10 @@ class BetaMiddleware(object):
 
     def process_response(self, request, response):
         if getattr(request, '_hunger_delete_cookie', False):
-            if six.PY2:
-                code = u'hunger_code'.encode('utf-8')
-            elif six.PY3:
+            if six.PY3:
                 code = 'hunger_code'
+            else:
+                code = u'hunger_code'.encode('utf-8')
             response.delete_cookie(code)
         return response
 
