@@ -25,7 +25,11 @@ def beta_invite(email, request, code=None, **kwargs):
         invite_url = request.build_absolute_uri(
             reverse('hunger-verify', args=[code]))
     else:
-        invite_url = setting('HUNGER_VERIFIED_REDIRECT')
+        verified_viewname = setting('HUNGER_VERIFIED_REDIRECT_VIEWNAME')
+        if verified_viewname:
+            invite_url = request.build_absolute_uri(reverse(verified_viewname))
+        else:
+            invite_url = setting('HUNGER_VERIFIED_REDIRECT')
     context_dict.setdefault('invite_url', invite_url)
 
     context = RequestContext(request, context_dict)
