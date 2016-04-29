@@ -60,7 +60,7 @@ class BetaViewTests(TestCase):
         Confirm that an unauthenticated user is redirected to login.
         """
         response = self.client.get(reverse('invited_only'))
-        self.assertRedirects(response, setting('LOGIN_URL'))
+        self.assertRedirects(response, setting('LOGIN_URL')+"?next=/invited-only/")
 
     def test_using_invite(self):
         cary = User.objects.create_user('cary', 'cary@example.com', 'secret')
@@ -128,7 +128,7 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('hunger-verify',
                                            args=[code.code]), follow=True)
         # Anonymous user cannot verify a private InvitationCode
-        self.assertRedirects(response, setting('LOGIN_URL'))
+        self.assertRedirects(response, setting('LOGIN_URL')+"?next=/hunger/verified/")
 
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
@@ -149,7 +149,7 @@ class BetaViewTests(TestCase):
                                            args=[code.code]), follow=True)
 
         response = self.client.get(reverse('invited_only'))
-        self.assertRedirects(response, setting('LOGIN_URL'))
+        self.assertRedirects(response, setting('LOGIN_URL')+"?next=/invited-only/")
 
         User.objects.create_user('dany', 'dany@example.com', 'secret')
         self.client.login(username='dany', password='secret')
@@ -166,7 +166,7 @@ class BetaViewTests(TestCase):
         response = self.client.get(reverse('hunger-verify',
                                            args=[code.code]), follow=True)
         # Anonymous user cannot verify a private InvitationCode
-        self.assertRedirects(response, setting('LOGIN_URL'))
+        self.assertRedirects(response, setting('LOGIN_URL')+"?next=/hunger/verified/")
 
         self.client.login(username='alice', password='secret')
         response = self.client.get(reverse('invited_only'))
