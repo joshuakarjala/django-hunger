@@ -86,7 +86,10 @@ class BetaMiddleware(object):
 
         if not request.user.is_authenticated():
             # Ask anonymous user to log in if trying to access in-beta view
-            return redirect(setting('LOGIN_URL'))
+            # This is based on user_passes_test internal django function
+            path = request.get_full_path()
+            from django.contrib.auth.views import redirect_to_login
+            return redirect_to_login(path)
 
         if request.user.is_staff:
             return
