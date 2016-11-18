@@ -53,7 +53,7 @@ def resend_invite(modeladmin, request, queryset):
 
 
 class InvitationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'code', 'used', 'invited')
+    list_display = ('user', 'email', 'code', 'used', 'invited')
     list_filter = ('code',)
     search_fields = ['user__username', 'user__email']
     actions = [send_invite, resend_invite, export_email]
@@ -62,7 +62,7 @@ class InvitationAdmin(admin.ModelAdmin):
 class InvitationCodeAdmin(admin.ModelAdmin):
     """Admin for invitation code"""
     form = InvitationCodeAdminForm
-    list_display = ('code', 'num_invites', 'owner', )
+    list_display = ('code', 'num_invites', 'invited_users', 'owner')
     filter_horizontal = ('invited_users', )
     search_fields = ['created_by__email', 'owner__username']
 
