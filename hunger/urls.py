@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from .views import (InviteView, VerifiedView, InvalidView, NotBetaView,
                     InviteSentView, verify_invite)
 
