@@ -56,6 +56,8 @@ valid targets for the built-in ``django.shortcuts.redirect`` function.
 
 - ``HUNGER_REDIRECT`` for users accessing protected content while not
   in the beta.
+- ``HUNGER_LOGIN_URL`` for users accessing protected content while
+  logged out.
 - ``HUNGER_VERIFIED_REDIRECT`` for the page a user sees after
   successfully joining and verifying in-beta status.
 - ``HUNGER_INVITE_SENT_REDIRECT`` for the page a user sees after

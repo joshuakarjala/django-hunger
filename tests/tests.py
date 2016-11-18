@@ -189,3 +189,11 @@ class BetaViewTests(TestCase):
         Confirm that settings override DEFAULT_SETTINGS
         """
         self.assertEqual(False, setting('HUNGER_ENABLE'))
+
+    @override_settings(HUNGER_LOGIN_URL=setting('LOGIN_URL'))
+    def test_custom_login_url(self):
+        """
+        Confirm that HUNGER_LOGIN_URL setting overrides LOGIN_URL
+        """
+        response = self.client.get(reverse('invited_only'))
+        self.assertRedirects(response, setting('HUNGER_LOGIN_URL'))

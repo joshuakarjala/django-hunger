@@ -86,7 +86,12 @@ class BetaMiddleware(object):
 
         if not request.user.is_authenticated():
             # Ask anonymous user to log in if trying to access in-beta view
-            return redirect(setting('LOGIN_URL'))
+            try:
+                setting('HUNGER_LOGIN_URL')
+            except KeyError:
+                return redirect(setting('LOGIN_URL'))
+            else:
+                return redirect(setting('HUNGER_LOGIN_URL'))
 
         if request.user.is_staff:
             return
